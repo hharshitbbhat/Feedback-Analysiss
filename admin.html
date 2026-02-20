@@ -1,0 +1,3909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard - Faculty Feedback System</title>
+
+<style>
+
+  html {
+  zoom: 0.8;
+}
+
+@-moz-document url-prefix() {
+  html {
+    transform: scale(0.8);
+    transform-origin: 0 0;
+  }
+  body {
+    width: 125%;
+  }
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  background: #f5f5f5;
+  line-height: 1.6;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+body.dark-theme {
+  background: #1a1a1a;
+  color: #e0e0e0;
+}
+
+/* Theme Toggle */
+.theme-toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1001;
+  background: white;
+  border: 2px solid #ddd;
+  border-radius: 50px;
+  padding: 10px 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+body.dark-theme .theme-toggle {
+  background: #2d2d2d;
+  border-color: #404040;
+  color: #e0e0e0;
+}
+
+.theme-toggle:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.theme-toggle-icon {
+  font-size: 20px;
+}
+
+/* Header */
+.header {
+  background: #000;
+  color: white;
+  padding: 20px 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+body.dark-theme .header {
+  background: #0a0a0a;
+}
+
+.header-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header h1 {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.header-nav {
+  display: flex;
+  gap: 20px;
+}
+
+.header-nav a {
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 8px 16px;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  border-radius: 2px;
+}
+
+.header-nav a:hover {
+  border-color: white;
+}
+
+/* Container */
+.container {
+  max-width: 1400px;
+  margin: 40px auto;
+  padding: 0 30px;
+}
+
+body.dark-theme .container {
+  color: #e0e0e0;
+}
+
+/* Dashboard Cards */
+.dashboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 25px;
+  margin-bottom: 50px;
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card-btn {
+  background: white;
+  padding: 35px 30px;
+  border: 2px solid #ddd;
+  text-align: center;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  border-radius: 2px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+body.dark-theme .card-btn {
+  background: #2d2d2d;
+  border-color: #404040;
+  color: #e0e0e0;
+}
+
+.card-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  transition: left 0.3s ease;
+  z-index: 0;
+}
+
+body.dark-theme .card-btn::before {
+  background: #404040;
+}
+
+.card-btn:hover::before {
+  left: 0;
+}
+
+.card-btn:hover {
+  border-color: #000;
+  color: white;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+body.dark-theme .card-btn:hover {
+  border-color: #666;
+}
+
+.card-btn span {
+  position: relative;
+  z-index: 1;
+  display: block;
+}
+
+.card-icon {
+  font-size: 32px;
+  margin-bottom: 12px;
+  display: block;
+}
+
+/* Sections */
+.section {
+  display: none;
+  background: white;
+  padding: 40px;
+  border-radius: 2px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  animation: slideIn 0.4s ease-out;
+}
+
+body.dark-theme .section {
+  background: #2d2d2d;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.section h2 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 3px solid #000;
+  color: #000;
+}
+
+body.dark-theme .section h2 {
+  color: #ffffff;
+  border-bottom-color: #ffffff;
+}
+
+/* Chart containers dark theme */
+body.dark-theme div[style*="background: white; padding: 25px"] {
+  background: #2d2d2d !important;
+  color: #e0e0e0;
+}
+
+body.dark-theme div[style*="background: white; padding: 25px"] div[style*="font-size: 16px"] {
+  color: #ffffff;
+}
+
+/* Forms */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #333;
+  font-size: 14px;
+}
+
+body.dark-theme .form-group label {
+  color: #e0e0e0;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 12px 15px;
+  border: 2px solid #ddd;
+  font-size: 14px;
+  font-family: inherit;
+  transition: all 0.3s ease;
+  border-radius: 2px;
+  background: white;
+}
+
+body.dark-theme input,
+body.dark-theme select,
+body.dark-theme textarea {
+  background: #3a3a3a;
+  border-color: #404040;
+  color: #ffffff;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: #000;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+}
+
+body.dark-theme input:focus,
+body.dark-theme select:focus,
+body.dark-theme textarea:focus {
+  border-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+}
+
+input:hover, select:hover, textarea:hover {
+  border-color: #999;
+}
+
+body.dark-theme input:hover,
+body.dark-theme select:hover,
+body.dark-theme textarea:hover {
+  border-color: #666;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+button {
+  padding: 14px 30px;
+  background: #000;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  border-radius: 2px;
+  width: auto;
+  min-width: 200px;
+}
+
+body.dark-theme button {
+  background: #ffffff;
+  color: #000;
+}
+
+button:hover {
+  background: #222;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-theme button:hover {
+  background: #e0e0e0;
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+button:disabled {
+  background: #999;
+  cursor: not-allowed;
+  transform: none;
+}
+
+body.dark-theme button:disabled {
+  background: #666;
+  color: #999;
+}
+
+/* Table */
+.table-container {
+  background: white;
+  border-radius: 2px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: 30px;
+}
+
+body.dark-theme .table-container {
+  background: #2d2d2d;
+}
+
+.table-header {
+  padding: 20px;
+  background: #fafafa;
+  border-bottom: 2px solid #ddd;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+body.dark-theme .table-header {
+  background: #262626;
+  border-bottom-color: #404040;
+}
+
+.table-header h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #000;
+}
+
+body.dark-theme .table-header h3 {
+  color: #ffffff;
+}
+
+.table-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn-secondary {
+  padding: 8px 16px;
+  background: white;
+  color: #000;
+  border: 2px solid #000;
+  font-size: 13px;
+  min-width: auto;
+  font-weight: 600;
+}
+
+body.dark-theme .btn-secondary {
+  background: #2d2d2d;
+  color: #ffffff;
+  border-color: #ffffff;
+}
+
+.btn-secondary:hover {
+  background: #000;
+  color: white;
+}
+
+body.dark-theme .btn-secondary:hover {
+  background: #ffffff;
+  color: #000;
+}
+
+.btn-danger {
+  padding: 8px 16px;
+  background: white;
+  color: #000;
+  border: 2px solid #000;
+  font-size: 12px;
+  min-width: auto;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+body.dark-theme .btn-danger {
+  background: #2d2d2d;
+  color: #ffffff;
+  border-color: #ffffff;
+}
+
+.btn-danger:hover {
+  background: #000;
+  color: white;
+}
+
+body.dark-theme .btn-danger:hover {
+  background: #ffffff;
+  color: #000;
+}
+
+.scroll {
+  max-height: 500px;
+  overflow-y: auto;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+body.dark-theme table {
+  background: #2d2d2d;
+}
+
+thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+th, td {
+  padding: 14px 12px;
+  text-align: left;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+th {
+  background: #000;
+  color: white;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+body.dark-theme th {
+  background: #0a0a0a;
+}
+
+tbody tr {
+  transition: background 0.2s ease;
+}
+
+tbody tr:hover {
+  background: #f9f9f9;
+}
+
+body.dark-theme tbody tr:hover {
+  background: #3a3a3a;
+}
+
+td {
+  color: #333;
+}
+
+body.dark-theme td {
+  color: #e0e0e0;
+  border-bottom-color: #404040;
+}
+
+.rating-cell {
+  font-weight: 700;
+  text-align: center;
+}
+
+.rating-5 { color: #000; }
+.rating-4 { color: #333; }
+.rating-3 { color: #666; }
+.rating-2 { color: #999; }
+.rating-1 { color: #ccc; }
+
+.empty-state {
+  padding: 60px 20px;
+  text-align: center;
+  color: #999;
+}
+
+body.dark-theme .empty-state {
+  color: #666;
+}
+
+.empty-state-icon {
+  font-size: 48px;
+  margin-bottom: 15px;
+  opacity: 0.3;
+}
+
+.empty-state-text {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* Action Buttons */
+.action-cell {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Loading States */
+.loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  vertical-align: middle;
+  margin-left: 10px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Messages */
+.message {
+  padding: 15px 20px;
+  margin-bottom: 20px;
+  border-radius: 2px;
+  font-weight: 600;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message-success {
+  background: #000;
+  color: white;
+  border: 2px solid #000;
+}
+
+body.dark-theme .message-success {
+  background: #ffffff;
+  color: #000;
+}
+
+.message-error {
+  background: white;
+  color: #000;
+  border: 2px solid #000;
+}
+
+body.dark-theme .message-error {
+  background: #2d2d2d;
+  color: #ffffff;
+  border-color: #ffffff;
+}
+
+/* Statistics */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.stat-card {
+  background: white;
+  padding: 25px;
+  border: 2px solid #ddd;
+  border-radius: 2px;
+  text-align: center;
+}
+
+body.dark-theme .stat-card {
+  background: #2d2d2d;
+  border-color: #404040;
+}
+
+.stat-number {
+  font-size: 36px;
+  font-weight: 700;
+  color: #000;
+  margin-bottom: 5px;
+}
+
+body.dark-theme .stat-number {
+  color: #ffffff;
+}
+
+.stat-label {
+  font-size: 13px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+body.dark-theme .stat-label {
+  color: #b0b0b0;
+}
+
+.stat-sublabel {
+  font-size: 11px;
+  color: #999;
+  margin-top: 5px;
+  font-weight: 500;
+}
+
+body.dark-theme .stat-sublabel {
+  color: #808080;
+}
+
+/* Filter Controls */
+.filter-controls {
+  background: #fafafa;
+  padding: 20px;
+  border-radius: 2px;
+  margin-bottom: 30px;
+  border: 2px solid #ddd;
+}
+
+body.dark-theme .filter-controls {
+  background: #262626;
+  border-color: #404040;
+}
+
+.filter-controls h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 15px;
+  color: #000;
+}
+
+body.dark-theme .filter-controls h3 {
+  color: #ffffff;
+}
+
+.filter-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.filter-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+}
+
+body.dark-theme .filter-group label {
+  color: #e0e0e0;
+}
+
+/* Modal */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+  animation: fadeIn 0.3s ease;
+}
+
+body.dark-theme .modal {
+  background: rgba(0, 0, 0, 0.95);
+}
+
+.modal.active {
+  display: flex;
+}
+
+.modal-content {
+  background: white;
+  padding: 40px;
+  border-radius: 2px;
+  max-width: 500px;
+  width: 90%;
+  animation: slideIn 0.3s ease-out;
+}
+
+body.dark-theme .modal-content {
+  background: #2d2d2d;
+}
+
+.modal-content h3 {
+  font-size: 20px;
+  margin-bottom: 15px;
+  color: #000;
+}
+
+body.dark-theme .modal-content h3 {
+  color: #ffffff;
+}
+
+.modal-content p {
+  margin-bottom: 25px;
+  color: #666;
+}
+
+body.dark-theme .modal-content p {
+  color: #b0b0b0;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: flex-end;
+}
+
+.modal-actions button {
+  min-width: 120px;
+}
+
+/* Question Order Badge */
+.order-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: #000;
+  color: white;
+  font-weight: 700;
+  border-radius: 50%;
+  font-size: 14px;
+}
+
+body.dark-theme .order-badge {
+  background: #ffffff;
+  color: #000;
+}
+
+/* DRAG AND DROP STYLES */
+.drag-handle {
+  cursor: move;
+  font-size: 18px;
+  color: #999;
+  padding: 0 8px;
+  user-select: none;
+  display: inline-flex;
+  align-items: center;
+}
+
+.drag-handle:hover {
+  color: #000;
+}
+
+body.dark-theme .drag-handle:hover {
+  color: #ffffff;
+}
+
+.draggable-row {
+  transition: background-color 0.2s ease;
+}
+
+.draggable-row.dragging {
+  opacity: 0.5;
+  background: #f0f0f0 !important;
+}
+
+body.dark-theme .draggable-row.dragging {
+  background: #404040 !important;
+}
+
+.draggable-row.drag-over {
+  border-top: 3px solid #000 !important;
+}
+
+body.dark-theme .draggable-row.drag-over {
+  border-top: 3px solid #ffffff !important;
+}
+
+.drag-info {
+  background: #e8f4ff;
+  padding: 12px 16px;
+  border-left: 4px solid #0066cc;
+  margin-bottom: 20px;
+  border-radius: 2px;
+  font-size: 14px;
+  color: #333;
+}
+
+body.dark-theme .drag-info {
+  background: #1a2a3a;
+  border-left-color: #4da6ff;
+  color: #b0d4ff;
+}
+
+.drag-info-icon {
+  font-size: 16px;
+  margin-right: 8px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 20px;
+    margin: 20px auto;
+  }
+
+  .header-content {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+
+  .dashboard {
+    grid-template-columns: 1fr;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .section {
+    padding: 25px 20px;
+  }
+
+  .scroll {
+    max-height: 400px;
+  }
+
+  button {
+    width: 100%;
+  }
+
+  .table-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .table-actions {
+    width: 100%;
+  }
+
+  .btn-secondary {
+    flex: 1;
+  }
+
+  .action-cell {
+    flex-direction: column;
+  }
+
+  .theme-toggle {
+    top: 10px;
+    right: 10px;
+    padding: 8px 16px;
+  }
+
+  .theme-toggle-text {
+    display: none;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- Theme Toggle Button -->
+<div class="theme-toggle" id="themeToggle">
+  <span class="theme-toggle-icon" id="themeIcon">🌙</span>
+  <span class="theme-toggle-text" id="themeText">Dark Mode</span>
+</div>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-content">
+    <h1>📊 Admin Dashboard - Full Control Panel</h1>
+    <div class="header-nav">
+      <a href="/">← Back to Landing Page</a>
+      <a href="/admin">↻ Refresh</a>
+      <a href="/logout?type=admin">⎋ Logout</a>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- Dashboard Cards -->
+  <div class="dashboard">
+    <div class="card-btn" data-section="faculty">
+      <span>
+        <span class="card-icon">👨‍🏫</span>
+        Manage Faculty
+      </span>
+    </div>
+    <div class="card-btn" data-section="course">
+      <span>
+        <span class="card-icon">📚</span>
+        Manage Courses
+      </span>
+    </div>
+    <div class="card-btn" data-section="student">
+      <span>
+        <span class="card-icon">🎓</span>
+        Manage Students
+      </span>
+    </div>
+    <div class="card-btn" data-section="questions">
+      <span>
+        <span class="card-icon">❓</span>
+        Manage Questions
+      </span>
+    </div>
+    <div class="card-btn" data-section="feedback">
+  <span>
+    <span class="card-icon">📋</span>
+    Manage Feedback
+  </span>
+  </div>
+    <div class="card-btn" data-section="visualization">
+      <span>
+        <span class="card-icon">📊</span>
+        Visualize Feedback
+      </span>
+    </div>
+  </div>
+
+  <!-- MANAGE FACULTY -->
+  <div id="faculty" class="section">
+    <h2>Manage Faculty Members</h2>
+    <div id="facultyMessage"></div>
+    
+    <!-- Add Faculty Form -->
+    <form id="facultyForm" action="/add-faculty" method="POST">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Faculty Name *</label>
+          <input name="name" placeholder="e.g., Dr. John Smith" required>
+        </div>
+        <div class="form-group">
+          <label>Designation *</label>
+          <select name="designation" required>
+            <option value="">Select Designation</option>
+            <option value="Professor">Professor</option>
+            <option value="Associate Professor">Associate Professor</option>
+            <option value="Assistant Professor">Assistant Professor</option>
+            <option value="Lecturer">Lecturer</option>
+            <option value="Senior Lecturer">Senior Lecturer</option>
+            <option value="Teaching Assistant">Teaching Assistant</option>
+            <option value="Research Associate">Research Associate</option>
+            <option value="Visiting Faculty">Visiting Faculty</option>
+            <option value="Adjunct Professor">Adjunct Professor</option>
+            <option value="Guest Lecturer">Guest Lecturer</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Department *</label>
+          <select name="dept" required>
+            <option value="">Select Department</option>
+            <option value="Computer Science">Computer Science</option>
+            <option value="Information Technology">Information Technology</option>
+            <option value="Electronics & Communication">Electronics & Communication</option>
+            <option value="Electrical Engineering">Electrical Engineering</option>
+            <option value="Mechanical Engineering">Mechanical Engineering</option>
+            <option value="Civil Engineering">Civil Engineering</option>
+            <option value="Chemical Engineering">Chemical Engineering</option>
+            <option value="Biotechnology">Biotechnology</option>
+            <option value="Mathematics">Mathematics</option>
+            <option value="Physics">Physics</option>
+            <option value="Chemistry">Chemistry</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+      </div>
+      <button type="submit">Add Faculty Member</button>
+    </form>
+
+    <!-- Faculty List -->
+    <div class="table-container" style="margin-top: 40px;">
+      <div class="table-header">
+        <h3>All Faculty Members</h3>
+        <div class="table-actions">
+          <button class="btn-secondary btn-refresh-faculty">↻ Refresh</button>
+        </div>
+      </div>
+      <div class="scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Designation</th>
+              <th>Department</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="facultyList">
+            <tr><td colspan="5" class="empty-state">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- MANAGE COURSES -->
+  <div id="course" class="section">
+    <h2>Manage Courses</h2>
+    <div id="courseMessage"></div>
+    
+    <!-- Add Course Form -->
+    <form id="courseForm" action="/add-course" method="POST">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Course Name *</label>
+          <input name="course" placeholder="e.g., Data Structures" required>
+        </div>
+<div class="form-group">
+  <label>Programme *</label>
+  <select name="programme" required>
+      <option value="">Select Programme</option>
+      <option value="B.Tech">B.Tech</option>
+      <option value="M.Tech">M.Tech</option>
+     <option value="BCA">BCA</option>
+      <option value="MCA">MCA</option>
+      <option value="B.Sc">B.Sc</option>
+      <option value="M.Sc">M.Sc</option>
+      <option value="BBA">BBA</option>
+      <option value="MBA">MBA</option>
+     <option value="B.Com">B.Com</option>
+      <option value="M.Com">M.Com</option>
+      <option value="BA">BA</option>
+     <option value="MA">MA</option>
+     <option value="PhD">PhD</option>
+      <option value="Diploma">Diploma</option>
+     <option value="Other">Other</option>
+  </select>
+      </div>
+        <div class="form-group">
+          <label>Semester *</label>
+          <select name="semester" required>
+            <option value="">Select Semester</option>
+            <option value="1">Semester 1</option>
+            <option value="2">Semester 2</option>
+            <option value="3">Semester 3</option>
+            <option value="4">Semester 4</option>
+            <option value="5">Semester 5</option>
+            <option value="6">Semester 6</option>
+            <option value="7">Semester 7</option>
+            <option value="8">Semester 8</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Faculty ID *</label>
+          <input name="faculty" type="number" placeholder="e.g., 1" required>
+        </div>
+      </div>
+      <button type="submit">Add Course</button>
+    </form>
+
+    <!-- Course List -->
+    <div class="table-container" style="margin-top: 40px;">
+      <div class="table-header">
+        <h3>All Courses</h3>
+        <div class="table-actions">
+          <button class="btn-secondary btn-refresh-courses">↻ Refresh</button>
+        </div>
+      </div>
+      <div class="scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Course Name</th>
+              <th>Programme</th>
+              <th>Semester</th>
+              <th>Faculty ID</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="courseList">
+            <tr><td colspan="6" class="empty-state">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- MANAGE STUDENTS -->
+  <div id="student" class="section">
+    <h2>Manage Students</h2>
+    <div id="studentMessage"></div>
+    
+    <!-- Add Student Form -->
+    <form id="studentForm" action="/add-student" method="POST">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Student Code *</label>
+          <input name="code" placeholder="e.g., 20CS001" required>
+        </div>
+        <div class="form-group">
+          <label>Student Name *</label>
+          <input name="name" placeholder="e.g., Jane Doe" required>
+        </div>
+        <div class="form-group">
+          <label>Username *</label>
+          <input name="username" placeholder="e.g., jane.doe" required>
+        </div>
+        <div class="form-group">
+          <label>Password *</label>
+          <input name="password" type="password" placeholder="Enter password" required>
+        </div>
+        <div class="form-group">
+          <label>Department *</label>
+          <select name="dept" required>
+            <option value="">Select Department</option>
+            <option value="Computer Science">Computer Science</option>
+            <option value="Information Technology">Information Technology</option>
+            <option value="Electronics & Communication">Electronics & Communication</option>
+            <option value="Electrical Engineering">Electrical Engineering</option>
+            <option value="Mechanical Engineering">Mechanical Engineering</option>
+            <option value="Civil Engineering">Civil Engineering</option>
+            <option value="Chemical Engineering">Chemical Engineering</option>
+            <option value="Biotechnology">Biotechnology</option>
+            <option value="Mathematics">Mathematics</option>
+            <option value="Physics">Physics</option>
+            <option value="Chemistry">Chemistry</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Semester *</label>
+          <select name="sem" required>
+            <option value="">Select Semester</option>
+            <option value="1">Semester 1</option>
+            <option value="2">Semester 2</option>
+            <option value="3">Semester 3</option>
+            <option value="4">Semester 4</option>
+            <option value="5">Semester 5</option>
+            <option value="6">Semester 6</option>
+            <option value="7">Semester 7</option>
+            <option value="8">Semester 8</option>
+          </select>
+        </div>
+      </div>
+      <button type="submit">Add Student</button>
+    </form>
+
+    <!-- Student List -->
+    <div class="table-container" style="margin-top: 40px;">
+      <div class="table-header">
+        <h3>All Students</h3>
+        <div class="table-actions">
+          <button class="btn-secondary btn-refresh-students">↻ Refresh</button>
+        </div>
+      </div>
+      <div class="scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Code</th>
+              <th>Name</th>
+              <th>Username</th>
+              <th>Department</th>
+              <th>Semester</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="studentList">
+            <tr><td colspan="7" class="empty-state">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- MANAGE QUESTIONS -->
+  <div id="questions" class="section">
+    <h2>Manage Feedback Questions</h2>
+    <div id="questionMessage"></div>
+    
+    <!-- Drag and Drop Info -->
+    <div class="drag-info">
+      <span class="drag-info-icon">ℹ️</span>
+      <strong>Drag & Drop to Reorder:</strong> Simply drag the <strong>☰</strong> handle to reorder questions. The new sequence will be saved automatically!
+    </div>
+
+    <div style="background: #f0f7ff; padding: 18px 20px; border-left: 4px solid #000; margin-bottom: 30px; border-radius: 2px;">
+      <strong style="color: #000;">⚠️ Important Note:</strong>
+      <p style="margin: 8px 0 0 0; color: #555; font-size: 14px;">
+        Adding, editing, or deleting questions will require updating your feedback form code. 
+        The default 7 questions are currently hardcoded in the feedback form HTML.
+      </p>
+    </div>
+
+    <!-- Add Question Form -->
+    <form id="questionForm">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Question Text *</label>
+          <textarea name="question_text" placeholder="e.g., Rate the faculty's teaching effectiveness" required rows="3"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Display Order *</label>
+          <input name="display_order" type="number" min="1" placeholder="e.g., 1" required>
+        </div>
+        <div class="form-group">
+          <label>Required?</label>
+          <select name="is_required">
+            <option value="1">Yes</option>
+            <option value="0">No</option>
+          </select>
+        </div>
+      </div>
+      <button type="submit">Add Question</button>
+    </form>
+
+    <!-- Questions List -->
+    <div class="table-container" style="margin-top: 40px;">
+      <div class="table-header">
+        <h3>All Questions (Drag to Reorder)</h3>
+        <div class="table-actions">
+          <button class="btn-secondary btn-refresh-questions">↻ Refresh</button>
+        </div>
+      </div>
+      <div class="scroll">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 50px;">Drag</th>
+              <th style="width: 80px;">Order</th>
+              <th>Question</th>             
+              <th>Required</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="questionsList">
+            <tr><td colspan="7" class="empty-state">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- MANAGE FEEDBACK -->
+  <div id="feedback" class="section">
+    <h2>Manage Feedback Responses</h2>
+    
+    <!-- Filter Controls -->
+    <div class="filter-controls">
+      <h3>🔍 Filter Options</h3>
+      <div class="filter-grid">
+        <div class="filter-group">
+          <label>Time Period</label>
+          <select id="timePeriodFilter" class="btn-secondary" style="padding: 10px 12px; cursor: pointer; width: 100%;">
+            <option value="all">All Time</option>
+            <option value="1month">Last Month</option>
+            <option value="3months">Last 3 Months</option>
+            <option value="6months">Last 6 Months</option>
+            <option value="1year" selected>Last Year</option>
+            <option value="2years">Last 2 Years</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Faculty Member</label>
+          <select id="facultyFilter" class="btn-secondary" style="padding: 10px 12px; cursor: pointer; width: 100%;">
+            <option value="">All Faculty Members</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    
+    <div class="stats-grid" id="statsGrid" style="display: none;">
+      <div class="stat-card">
+        <div class="stat-number" id="totalFeedback">0</div>
+        <div class="stat-label">Total Responses</div>
+        <div class="stat-sublabel" id="timePeriodLabel">Last Year</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="avgRating">0.0</div>
+        <div class="stat-label">Average Rating</div>
+        <div class="stat-sublabel">Across all questions</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="topFaculty">-</div>
+        <div class="stat-label">Top Rated Faculty</div>
+        <div class="stat-sublabel" id="topFacultyRating">-</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="topFacultyResponseCount">0</div>
+        <div class="stat-label">Top Faculty Responses</div>
+        <div class="stat-sublabel">In selected period</div>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <div class="table-header">
+        <h3>All Feedback Responses</h3>
+        <div class="table-actions">
+          <button class="btn-secondary btn-export-csv">⬇ Export CSV</button>
+          <button class="btn-secondary btn-refresh-feedback">↻ Refresh</button>
+        </div>
+      </div>
+      
+      <div class="scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Student</th>
+              <th>Code</th>
+              <th>Course</th>
+              <th>Faculty</th>
+              <th>Q1</th>
+              <th>Q2</th>
+              <th>Q3</th>
+              <th>Q4</th>
+              <th>Q5</th>
+              <th>Q6</th>
+              <th>Q7</th>
+              <th>Comments</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="feedbackBody">
+            <tr>
+              <td colspan="14" class="empty-state">
+                <div class="empty-state-icon">📋</div>
+                <div class="empty-state-text">Loading feedback...</div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- VISUALIZE FEEDBACK -->
+  <div id="visualization" class="section">
+    <div style="margin-bottom: 30px;">
+      <h2>Feedback Analytics & Visualizations</h2>
+      <p style="color: #666; font-size: 15px; margin-top: 8px;">Comprehensive insights into faculty feedback responses with interactive charts and detailed analytics</p>
+    </div>
+    
+    <!-- Filter Controls for Visualization -->
+    <div class="filter-controls" style="background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);">
+      <h3 style="margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">🔍 Advanced Filters</h3>
+      <div class="filter-grid">
+        <div class="filter-group">
+          <label style="font-weight: 700; color: #000;">📅 Time Period</label>
+          <select id="vizTimePeriodFilter" style="padding: 12px; cursor: pointer; width: 100%; border: 2px solid #ddd; border-radius: 4px; font-size: 14px; background: white;">
+            <option value="all">All Time</option>
+            <option value="1month">Last Month</option>
+            <option value="3months">Last 3 Months</option>
+            <option value="6months">Last 6 Months</option>
+            <option value="1year" selected>Last Year</option>
+            <option value="2years">Last 2 Years</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label style="font-weight: 700; color: #000;">👨‍🏫 Faculty Member</label>
+          <select id="vizFacultyFilter" style="padding: 12px; cursor: pointer; width: 100%; border: 2px solid #ddd; border-radius: 4px; font-size: 14px; background: white;">
+            <option value="">All Faculty Members</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label style="font-weight: 700; color: #000;">🏢 Department</label>
+          <select id="vizDepartmentFilter" style="padding: 12px; cursor: pointer; width: 100%; border: 2px solid #ddd; border-radius: 4px; font-size: 14px; background: white;">
+            <option value="">All Departments</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-top: 20px; display: flex; gap: 10px;">
+        <button class="btn-secondary" id="vizApplyFilters" style="flex: 1; padding: 12px 20px; font-weight: 700;">🔄 Apply Filters</button>
+        <button class="btn-secondary" id="vizDownloadCharts" style="flex: 1; padding: 12px 20px; font-weight: 700;">⬇️ Download Report</button>
+      </div>
+    </div>
+    
+    <!-- Overall Statistics with Enhanced Styling -->
+    <div class="stats-grid" style="margin: 50px 0; gap: 20px;">
+      <div class="stat-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none;">
+        <div class="stat-number" id="vizTotalResponses" style="color: white;">0</div>
+        <div class="stat-label" style="color: rgba(255,255,255,0.9); font-weight: 600;">Total Responses</div>
+        <div class="stat-sublabel" id="vizResponsesTrend" style="color: rgba(255,255,255,0.8); margin-top: 8px; font-size: 12px;"></div>
+      </div>
+      <div class="stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border: none;">
+        <div class="stat-number" id="vizOverallAverage" style="color: white;">0.0</div>
+        <div class="stat-label" style="color: rgba(255,255,255,0.9); font-weight: 600;">Overall Average</div>
+        <div class="stat-sublabel" style="color: rgba(255,255,255,0.8);">Out of 5.0</div>
+      </div>
+      <div class="stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; border: none;">
+        <div class="stat-number" id="vizHighestRating" style="color: white;">-</div>
+        <div class="stat-label" style="color: rgba(255,255,255,0.9); font-weight: 600;">Highest Rated</div>
+        <div class="stat-sublabel" id="vizHighestFaculty" style="color: rgba(255,255,255,0.8); font-size: 12px;"></div>
+      </div>
+      <div class="stat-card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; border: none;">
+        <div class="stat-number" id="vizLowestRating" style="color: white;">-</div>
+        <div class="stat-label" style="color: rgba(255,255,255,0.9); font-weight: 600;">Lowest Rated</div>
+        <div class="stat-sublabel" id="vizLowestFaculty" style="color: rgba(255,255,255,0.8); font-size: 12px;"></div>
+      </div>
+    </div>
+    
+    <!-- Key Insights Section -->
+    <div style="background: #f0f7ff; border-left: 4px solid #0066cc; padding: 20px; border-radius: 4px; margin-bottom: 40px;">
+      <p style="margin: 0; color: #003d99; font-size: 14px; font-weight: 600;">💡 Key Insights</p>
+      <p id="vizKeyInsights" style="margin: 8px 0 0 0; color: #333; font-size: 14px; line-height: 1.5;">Loading insights...</p>
+    </div>
+    
+    <!-- Charts Grid with Enhanced Styling -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); gap: 30px; margin-top: 40px;">
+      <!-- Overall Rating Distribution -->
+      <div style="background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); border-top: 4px solid #667eea;">
+        <div style="font-size: 16px; font-weight: 700; margin-bottom: 10px; color: #000; display: flex; align-items: center; gap: 8px;"><span>📊</span> Overall Rating Distribution</div>
+        <p style="font-size: 13px; color: #666; margin-bottom: 20px;">Visual distribution of all ratings across all respondents</p>
+        <canvas id="ratingDistributionChart" style="max-height: 350px;"></canvas>
+      </div>
+      
+      <!-- Faculty-wise Average Ratings -->
+      <div style="background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); border-top: 4px solid #f5576c;">
+        <div style="font-size: 16px; font-weight: 700; margin-bottom: 10px; color: #000; display: flex; align-items: center; gap: 8px;"><span>👨‍🏫</span> Faculty-wise Average Ratings</div>
+        <p style="font-size: 13px; color: #666; margin-bottom: 20px;">Comparative performance across all faculty members</p>
+        <canvas id="facultyRatingsChart" style="max-height: 350px;"></canvas>
+      </div>
+      
+      <!-- Faculty Comparison Line Chart -->
+      <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%); padding: 35px; border-radius: 12px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.10); border-left: 5px solid #667eea; grid-column: 1 / -1;">
+        <div style="margin-bottom: 25px;">
+          <div style="font-size: 18px; font-weight: 800; margin-bottom: 8px; color: #1a1a2e; display: flex; align-items: center; gap: 10px; letter-spacing: -0.5px;"><span style="font-size: 24px;">📊</span> Faculty Performance Comparison Analysis</div>
+          <p style="font-size: 14px; color: #555; margin: 0; line-height: 1.6;">Comprehensive multi-dimensional performance analysis comparing all faculty members across teaching quality metrics and assessment criteria</p>
+        </div>
+        <div style="background: #f0f4ff; border-radius: 8px; padding: 12px 15px; margin-bottom: 25px; border-left: 3px solid #667eea;">
+          <p style="font-size: 12px; color: #426cc4; margin: 0; font-weight: 500;"><strong>💡 Insight:</strong> Compare faculty performance trends across all evaluation dimensions to identify best practices and development areas</p>
+        </div>
+        <canvas id="facultyComparisonChart" style="max-height: 450px; margin-top: 20px; width: 100%; height: 480px; display: block;"></canvas>
+      </div>
+      
+      <!-- Question-wise Average Ratings -->
+      <div style="background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); border-top: 4px solid #00f2fe;">
+        <div style="font-size: 16px; font-weight: 700; margin-bottom: 10px; color: #000; display: flex; align-items: center; gap: 8px;"><span>❓</span> Question-wise Average Ratings</div>
+        <p style="font-size: 13px; color: #666; margin-bottom: 20px;">Performance metrics across 7 assessment dimensions</p>
+        <canvas id="questionsRatingsChart" style="max-height: 350px;"></canvas>
+      </div>
+      
+      <!-- Department-wise Response Distribution -->
+      <div style="background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); border-top: 4px solid #38f9d7;">
+        <div style="font-size: 16px; font-weight: 700; margin-bottom: 10px; color: #000; display: flex; align-items: center; gap: 8px;"><span>🏢</span> Department-wise Responses</div>
+        <p style="font-size: 13px; color: #666; margin-bottom: 20px;">Response participation rate by academic department</p>
+        <canvas id="departmentDistributionChart" style="max-height: 350px;"></canvas>
+      </div>
+      
+      <!-- Response Trend Over Time -->
+      <div style="background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); border-top: 4px solid #667eea; grid-column: 1 / -1;">
+        <div style="font-size: 16px; font-weight: 700; margin-bottom: 10px; color: #000; display: flex; align-items: center; gap: 8px;"><span>📈</span> Response Trend Over Time (Last 30 Days)</div>
+        <p style="font-size: 13px; color: #666; margin-bottom: 20px;">Day-by-day feedback submission activity and patterns</p>
+        <canvas id="trendChart" style="max-height: 350px;"></canvas>
+      </div>
+      
+      <!-- Semester-wise Response Distribution -->
+      <div style="background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); border-top: 4px solid #9C27B0;">
+        <div style="font-size: 16px; font-weight: 700; margin-bottom: 10px; color: #000; display: flex; align-items: center; gap: 8px;"><span>📚</span> Semester-wise Responses</div>
+        <p style="font-size: 13px; color: #666; margin-bottom: 20px;">Response distribution across different semester levels</p>
+        <canvas id="semesterDistributionChart" style="max-height: 350px;"></canvas>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Confirmation Modal -->
+<div id="confirmModal" class="modal">
+  <div class="modal-content">
+    <h3 id="modalTitle">Confirm Action</h3>
+    <p id="modalMessage">Are you sure you want to perform this action?</p>
+    <div class="modal-actions">
+      <button class="btn-secondary btn-modal-cancel">Cancel</button>
+      <button id="modalConfirm" class="btn-modal-confirm">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Faculty Modal -->
+<div id="editFacultyModal" class="modal">
+  <div class="modal-content" style="max-width: 600px;">
+    <h3>Edit Faculty Member</h3>
+    <form id="editFacultyForm">
+      <input type="hidden" id="editFacultyId">
+      
+      <div class="form-group">
+        <label>Faculty Name *</label>
+        <input type="text" id="editFacultyName" required placeholder="e.g., Dr. John Smith">
+      </div>
+      
+      <div class="form-group">
+        <label>Designation *</label>
+        <select id="editFacultyDesignation" required>
+          <option value="">Select Designation</option>
+          <option value="Professor">Professor</option>
+          <option value="Associate Professor">Associate Professor</option>
+          <option value="Assistant Professor">Assistant Professor</option>
+          <option value="Lecturer">Lecturer</option>
+          <option value="Senior Lecturer">Senior Lecturer</option>
+          <option value="Teaching Assistant">Teaching Assistant</option>
+          <option value="Research Associate">Research Associate</option>
+          <option value="Visiting Faculty">Visiting Faculty</option>
+          <option value="Adjunct Professor">Adjunct Professor</option>
+          <option value="Guest Lecturer">Guest Lecturer</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label>Department *</label>
+        <select id="editFacultyDepartment" required>
+          <option value="">Select Department</option>
+          <option value="Computer Science">Computer Science</option>
+          <option value="Information Technology">Information Technology</option>
+          <option value="Electronics & Communication">Electronics & Communication</option>
+          <option value="Electrical Engineering">Electrical Engineering</option>
+          <option value="Mechanical Engineering">Mechanical Engineering</option>
+          <option value="Civil Engineering">Civil Engineering</option>
+          <option value="Chemical Engineering">Chemical Engineering</option>
+          <option value="Biotechnology">Biotechnology</option>
+          <option value="Mathematics">Mathematics</option>
+          <option value="Physics">Physics</option>
+          <option value="Chemistry">Chemistry</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+
+      <div class="modal-actions" style="margin-top: 20px;">
+        <button type="button" class="btn-secondary btn-edit-faculty-cancel">Cancel</button>
+        <button type="submit" class="btn-modal-confirm">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Edit Student Modal -->
+<div id="editStudentModal" class="modal">
+  <div class="modal-content" style="max-width: 600px;">
+    <h3>Edit Student</h3>
+    <form id="editStudentForm">
+      <input type="hidden" id="editStudentId">
+      
+      <div class="form-group">
+        <label>Student Code *</label>
+        <input type="text" id="editStudentCode" required placeholder="e.g., 20CS001">
+      </div>
+      
+      <div class="form-group">
+        <label>Student Name *</label>
+        <input type="text" id="editStudentName" required placeholder="e.g., Jane Doe">
+      </div>
+      
+      <div class="form-group">
+        <label>Username *</label>
+        <input type="text" id="editStudentUsername" required placeholder="e.g., jane.doe">
+      </div>
+      
+      <div class="form-group">
+        <label>Department *</label>
+        <select id="editStudentDepartment" required>
+          <option value="">Select Department</option>
+          <option value="Computer Science">Computer Science</option>
+          <option value="Information Technology">Information Technology</option>
+          <option value="Electronics & Communication">Electronics & Communication</option>
+          <option value="Electrical Engineering">Electrical Engineering</option>
+          <option value="Mechanical Engineering">Mechanical Engineering</option>
+          <option value="Civil Engineering">Civil Engineering</option>
+          <option value="Chemical Engineering">Chemical Engineering</option>
+          <option value="Biotechnology">Biotechnology</option>
+          <option value="Mathematics">Mathematics</option>
+          <option value="Physics">Physics</option>
+          <option value="Chemistry">Chemistry</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label>Semester *</label>
+        <select id="editStudentSemester" required>
+          <option value="">Select Semester</option>
+          <option value="1">Semester 1</option>
+          <option value="2">Semester 2</option>
+          <option value="3">Semester 3</option>
+          <option value="4">Semester 4</option>
+          <option value="5">Semester 5</option>
+          <option value="6">Semester 6</option>
+          <option value="7">Semester 7</option>
+          <option value="8">Semester 8</option>
+        </select>
+      </div>
+
+      <div class="modal-actions" style="margin-top: 20px;">
+        <button type="button" class="btn-secondary btn-edit-student-cancel">Cancel</button>
+        <button type="submit" class="btn-modal-confirm">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Edit Course Modal -->
+<div id="editCourseModal" class="modal">
+  <div class="modal-content" style="max-width: 600px;">
+    <h3>Edit Course</h3>
+    <form id="editCourseForm">
+      <input type="hidden" id="editCourseId">
+      
+      <div class="form-group">
+        <label>Course Name *</label>
+        <input type="text" id="editCourseName" required placeholder="e.g., Data Structures">
+      </div>
+      
+<div class="form-group">
+  <label>Programme *</label>
+  <select id="editCourseProgramme" required>
+    <option value="">Select Programme</option>
+    <option value="B.Tech">B.Tech</option>
+    <option value="M.Tech">M.Tech</option>
+    <option value="BCA">BCA</option>
+    <option value="MCA">MCA</option>
+    <option value="B.Sc">B.Sc</option>
+    <option value="M.Sc">M.Sc</option>
+    <option value="BBA">BBA</option>
+    <option value="MBA">MBA</option>
+    <option value="B.Com">B.Com</option>
+    <option value="M.Com">M.Com</option>
+    <option value="BA">BA</option>
+    <option value="MA">MA</option>
+    <option value="PhD">PhD</option>
+    <option value="Diploma">Diploma</option>
+    <option value="Other">Other</option>
+  </select>
+</div>
+      
+      <div class="form-group">
+        <label>Semester *</label>
+        <select id="editCourseSemester" required>
+          <option value="">Select Semester</option>
+          <option value="1">Semester 1</option>
+          <option value="2">Semester 2</option>
+          <option value="3">Semester 3</option>
+          <option value="4">Semester 4</option>
+          <option value="5">Semester 5</option>
+          <option value="6">Semester 6</option>
+          <option value="7">Semester 7</option>
+          <option value="8">Semester 8</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label>Faculty ID *</label>
+        <input type="number" id="editCourseFacultyId" required placeholder="e.g., 1">
+      </div>
+
+      <div class="modal-actions" style="margin-top: 20px;">
+        <button type="button" class="btn-secondary btn-edit-course-cancel">Cancel</button>
+        <button type="submit" class="btn-modal-confirm">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Edit Question Modal -->
+<div id="editQuestionModal" class="modal">
+  <div class="modal-content" style="max-width: 600px;">
+    <h3>Edit Question</h3>
+    <form id="editQuestionForm">
+      <input type="hidden" id="editQuestionId">
+      
+      <div class="form-group">
+        <label>Question Text *</label>
+        <textarea id="editQuestionText" required placeholder="e.g., Rate the faculty's teaching effectiveness" rows="3"></textarea>
+      </div>
+      
+      <div class="form-group">
+        <label>Question Type *</label>
+        <select id="editQuestionType" required>
+          <option value="">Select Type</option>
+          <option value="rating">Rating (1-5)</option>
+          <option value="text">Text Response</option>
+          <option value="yes_no">Yes/No</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label>Display Order *</label>
+        <input type="number" id="editQuestionOrder" min="1" required placeholder="e.g., 1">
+      </div>
+      
+      <div class="form-group">
+        <label>Required?</label>
+        <select id="editQuestionRequired">
+          <option value="1">Yes</option>
+          <option value="0">No</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label>Status</label>
+        <select id="editQuestionActive">
+          <option value="1">Active</option>
+          <option value="0">Inactive</option>
+        </select>
+      </div>
+
+      <div class="modal-actions" style="margin-top: 20px;">
+        <button type="button" class="btn-secondary btn-edit-question-cancel">Cancel</button>
+        <button type="submit" class="btn-modal-confirm">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+// Theme Toggle
+const themeToggle = document.getElementById('themeToggle');
+const themeIcon = document.getElementById('themeIcon');
+const themeText = document.getElementById('themeText');
+
+function setTheme(isDark) {
+  if (isDark) {
+    document.body.classList.add('dark-theme');
+    themeIcon.textContent = '☀️';
+    themeText.textContent = 'Light Mode';
+    localStorage.setItem('theme', 'dark');
+  } else {
+    document.body.classList.remove('dark-theme');
+    themeIcon.textContent = '🌙';
+    themeText.textContent = 'Dark Mode';
+    localStorage.setItem('theme', 'light');
+  }
+}
+
+themeToggle.addEventListener('click', function() {
+  const isDark = !document.body.classList.contains('dark-theme');
+  setTheme(isDark);
+});
+
+// Load saved theme
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme === 'dark') {
+  setTheme(true);
+}
+
+// Rest of your JavaScript code continues here...
+let feedbackData = [];
+let deleteAction = null;
+
+// DRAG AND DROP VARIABLES
+let draggedElement = null;
+let questionsData = [];
+
+// Add click event listeners to all options on page load
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('Admin panel loaded');
+  
+  // Add click handlers to dashboard cards
+  document.querySelectorAll('.card-btn').forEach(card => {
+    card.addEventListener('click', function() {
+      const sectionId = this.getAttribute('data-section');
+      showSection(sectionId);
+    });
+  });
+  
+  // Add refresh button handlers
+  const refreshFaculty = document.querySelector('.btn-refresh-faculty');
+  if (refreshFaculty) refreshFaculty.addEventListener('click', loadFaculty);
+  
+  const refreshCourses = document.querySelector('.btn-refresh-courses');
+  if (refreshCourses) refreshCourses.addEventListener('click', loadCourses);
+  
+  const refreshStudents = document.querySelector('.btn-refresh-students');
+  if (refreshStudents) refreshStudents.addEventListener('click', loadStudents);
+  
+  const refreshQuestions = document.querySelector('.btn-refresh-questions');
+  if (refreshQuestions) refreshQuestions.addEventListener('click', loadQuestions);
+  
+  const refreshFeedback = document.querySelector('.btn-refresh-feedback');
+  if (refreshFeedback) refreshFeedback.addEventListener('click', loadFeedback);
+  
+  const exportBtn = document.querySelector('.btn-export-csv');
+  if (exportBtn) exportBtn.addEventListener('click', exportToCSV);
+  
+  // Visualization filter handlers
+  const vizTimePeriodFilter = document.getElementById('vizTimePeriodFilter');
+  if (vizTimePeriodFilter) vizTimePeriodFilter.addEventListener('change', applyVisualizationFilters);
+  
+  const vizFacultyFilter = document.getElementById('vizFacultyFilter');
+  if (vizFacultyFilter) vizFacultyFilter.addEventListener('change', applyVisualizationFilters);
+  
+  const vizDepartmentFilter = document.getElementById('vizDepartmentFilter');
+  if (vizDepartmentFilter) vizDepartmentFilter.addEventListener('change', applyVisualizationFilters);
+  
+  const vizApplyFiltersBtn = document.getElementById('vizApplyFilters');
+  if (vizApplyFiltersBtn) vizApplyFiltersBtn.addEventListener('click', applyVisualizationFilters);
+  
+  const vizDownloadBtn = document.getElementById('vizDownloadCharts');
+  if (vizDownloadBtn) vizDownloadBtn.addEventListener('click', downloadVisualizationReport);
+  
+  // Modal buttons
+  const cancelBtn = document.querySelector('.btn-modal-cancel');
+  if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+  
+  const confirmBtn = document.querySelector('.btn-modal-confirm');
+  if (confirmBtn) confirmBtn.addEventListener('click', confirmDelete);
+  
+  // Filter change handlers
+  const timePeriodFilter = document.getElementById('timePeriodFilter');
+  if (timePeriodFilter) timePeriodFilter.addEventListener('change', applyFilters);
+  
+  const facultyFilter = document.getElementById('facultyFilter');
+  if (facultyFilter) facultyFilter.addEventListener('click', applyFilters);
+});
+
+function showSection(id) {
+  console.log('Showing section:', id);
+  
+  document.querySelectorAll('.section').forEach(s => {
+    s.style.display = 'none';
+  });
+  
+  const section = document.getElementById(id);
+  if (section) {
+    section.style.display = 'block';
+  }
+  
+  if (id === 'feedback') loadFeedback();
+  if (id === 'faculty') loadFaculty();
+  if (id === 'course') loadCourses();
+  if (id === 'student') loadStudents();
+  if (id === 'questions') loadQuestions();
+  if (id === 'visualization') loadVisualizationData();
+}
+
+function showMessage(containerId, message, type = 'success') {
+  const container = document.getElementById(containerId);
+  const div = document.createElement('div');
+  div.className = type === 'success' ? 'message message-success' : 'message message-error';
+  div.textContent = message;
+  container.innerHTML = '';
+  container.appendChild(div);
+  
+  setTimeout(() => {
+    div.style.animation = 'slideDown 0.3s ease-out reverse';
+    setTimeout(() => div.remove(), 300);
+  }, 5000);
+}
+
+function showModal(title, message, callback) {
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('modalMessage').textContent = message;
+  document.getElementById('confirmModal').classList.add('active');
+  deleteAction = callback;
+}
+
+function closeModal() {
+  document.getElementById('confirmModal').classList.remove('active');
+  deleteAction = null;
+}
+
+function confirmDelete() {
+  if (deleteAction) {
+    deleteAction();
+  }
+  closeModal();
+}
+
+// Time filter calculation
+function getTimePeriodDate(period) {
+  const now = new Date();
+  const cutoffDate = new Date();
+  
+  switch(period) {
+    case '1month':
+      cutoffDate.setMonth(now.getMonth() - 1);
+      break;
+    case '3months':
+      cutoffDate.setMonth(now.getMonth() - 3);
+      break;
+    case '6months':
+      cutoffDate.setMonth(now.getMonth() - 6);
+      break;
+    case '1year':
+      cutoffDate.setFullYear(now.getFullYear() - 1);
+      break;
+    case '2years':
+      cutoffDate.setFullYear(now.getFullYear() - 2);
+      break;
+    case 'all':
+    default:
+      return null;
+  }
+  
+  return cutoffDate;
+}
+
+function getTimePeriodLabel(period) {
+  const labels = {
+    'all': 'All Time',
+    '1month': 'Last Month',
+    '3months': 'Last 3 Months',
+    '6months': 'Last 6 Months',
+    '1year': 'Last Year',
+    '2years': 'Last 2 Years'
+  };
+  return labels[period] || 'All Time';
+}
+
+// FACULTY MANAGEMENT
+document.getElementById('facultyForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const btn = this.querySelector('button');
+  const originalText = btn.textContent;
+  btn.innerHTML = 'Adding... <span class="loading-spinner"></span>';
+  btn.disabled = true;
+  
+  fetch(this.action, {
+    method: 'POST',
+    body: new FormData(this)
+  })
+  .then(res => res.json())
+  .then(data => {
+    showMessage('facultyMessage', 'Faculty member added successfully!', 'success');
+    this.reset();
+    loadFaculty();
+  })
+  .catch(err => {
+    showMessage('facultyMessage', 'Failed to add faculty member', 'error');
+  })
+  .finally(() => {
+    btn.textContent = originalText;
+    btn.disabled = false;
+  });
+});
+
+function loadFaculty() {
+  const tbody = document.getElementById('facultyList');
+  tbody.innerHTML = '<tr><td colspan="5" class="empty-state">Loading...</td></tr>';
+  
+  fetch('/api/faculties')
+    .then(res => res.json())
+    .then(data => {
+      tbody.innerHTML = '';
+      if (!data.length) {
+        tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No faculty members found</td></tr>';
+        return;
+      }
+      
+      data.forEach(f => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td><strong>${f.id}</strong></td>
+          <td>${escapeHtml(f.faculty_name)}</td>
+          <td>${escapeHtml(f.designation)}</td>
+          <td>${escapeHtml(f.department)}</td>
+          <td>
+            <div class="action-cell">
+              <button class="btn-secondary" style="min-width: 60px;" onclick="editFaculty(${f.id})">✏️ Edit</button>
+              <button class="btn-danger" onclick="deleteFaculty(${f.id}, '${escapeHtml(f.faculty_name)}')">🗑 Delete</button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+    })
+    .catch(err => {
+      tbody.innerHTML = '<tr><td colspan="5" class="empty-state">Failed to load faculty</td></tr>';
+    });
+}
+
+function deleteFaculty(id, name) {
+  showModal(
+    'Delete Faculty Member',
+    `Are you sure you want to delete "${name}"? This action cannot be undone.`,
+    () => {
+      fetch(`/api/faculty/${id}`, { method: 'DELETE' })
+        .then(res => res.json())
+        .then(data => {
+          showMessage('facultyMessage', 'Faculty member deleted successfully!', 'success');
+          loadFaculty();
+        })
+        .catch(err => {
+          showMessage('facultyMessage', 'Failed to delete faculty member', 'error');
+        });
+    }
+  );
+}
+
+// COURSE MANAGEMENT
+document.getElementById('courseForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const btn = this.querySelector('button');
+  const originalText = btn.textContent;
+  btn.innerHTML = 'Adding... <span class="loading-spinner"></span>';
+  btn.disabled = true;
+  
+  fetch(this.action, {
+    method: 'POST',
+    body: new FormData(this)
+  })
+  .then(res => res.json())
+  .then(data => {
+    showMessage('courseMessage', 'Course added successfully!', 'success');
+    this.reset();
+    loadCourses();
+  })
+  .catch(err => {
+    showMessage('courseMessage', 'Failed to add course', 'error');
+  })
+  .finally(() => {
+    btn.textContent = originalText;
+    btn.disabled = false;
+  });
+});
+
+function loadCourses() {
+  const tbody = document.getElementById('courseList');
+  tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Loading...</td></tr>';
+  
+  fetch('/api/courses')
+    .then(res => res.json())
+    .then(data => {
+      tbody.innerHTML = '';
+      if (!data.length) {
+        tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No courses found</td></tr>';
+        return;
+      }
+      
+      data.forEach(c => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td><strong>${c.id}</strong></td>
+          <td>${escapeHtml(c.course_name)}</td>
+          <td>${escapeHtml(c.programme)}</td>
+          <td>${c.semester}</td>
+          <td>${c.faculty_id}</td>
+          <td>
+            <div class="action-cell">
+              <button class="btn-secondary" style="min-width: 60px;" onclick="editCourse(${c.id})">✏️ Edit</button>
+              <button class="btn-danger" onclick="deleteCourse(${c.id}, '${escapeHtml(c.course_name)}')">🗑 Delete</button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+    })
+    .catch(err => {
+      tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Failed to load courses</td></tr>';
+    });
+}
+
+function deleteCourse(id, name) {
+  showModal(
+    'Delete Course',
+    `Are you sure you want to delete "${name}"? This action cannot be undone.`,
+    () => {
+      fetch(`/api/course/${id}`, { method: 'DELETE' })
+        .then(res => res.json())
+        .then(data => {
+          showMessage('courseMessage', 'Course deleted successfully!', 'success');
+          loadCourses();
+        })
+        .catch(err => {
+          showMessage('courseMessage', 'Failed to delete course', 'error');
+        });
+    }
+  );
+}
+
+// STUDENT MANAGEMENT
+document.getElementById('studentForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const btn = this.querySelector('button');
+  const originalText = btn.textContent;
+  btn.innerHTML = 'Adding... <span class="loading-spinner"></span>';
+  btn.disabled = true;
+  
+  fetch(this.action, {
+    method: 'POST',
+    body: new FormData(this)
+  })
+  .then(res => res.json())
+  .then(data => {
+    showMessage('studentMessage', 'Student added successfully!', 'success');
+    this.reset();
+    loadStudents();
+  })
+  .catch(err => {
+    showMessage('studentMessage', 'Failed to add student', 'error');
+  })
+  .finally(() => {
+    btn.textContent = originalText;
+    btn.disabled = false;
+  });
+});
+
+function loadStudents() {
+  const tbody = document.getElementById('studentList');
+  tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Loading...</td></tr>';
+  
+  fetch('/api/students')
+    .then(res => res.json())
+    .then(data => {
+      tbody.innerHTML = '';
+      if (!data.length) {
+        tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No students found</td></tr>';
+        return;
+      }
+      
+      data.forEach(s => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td><strong>${s.id}</strong></td>
+          <td>${escapeHtml(s.student_code)}</td>
+          <td>${escapeHtml(s.student_name)}</td>
+          <td>${escapeHtml(s.username)}</td>
+          <td>${escapeHtml(s.department)}</td>
+          <td>${s.semester}</td>
+          <td>
+            <div class="action-cell">
+              <button class="btn-secondary" style="min-width: 60px;" onclick="editStudent(${s.id})">✏️ Edit</button>
+              <button class="btn-danger" onclick="deleteStudent(${s.id}, '${escapeHtml(s.student_name)}')">🗑 Delete</button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+    })
+    .catch(err => {
+      tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Failed to load students</td></tr>';
+    });
+}
+
+function deleteStudent(id, name) {
+  showModal(
+    'Delete Student',
+    `Are you sure you want to delete "${name}"? This will also delete all their feedback responses.`,
+    () => {
+      fetch(`/api/student/${id}`, { method: 'DELETE' })
+        .then(res => res.json())
+        .then(data => {
+          showMessage('studentMessage', 'Student deleted successfully!', 'success');
+          loadStudents();
+        })
+        .catch(err => {
+          showMessage('studentMessage', 'Failed to delete student', 'error');
+        });
+    }
+  );
+}
+
+// ============================================
+// QUESTION MANAGEMENT WITH DRAG AND DROP
+// ============================================
+
+document.getElementById('questionForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const btn = this.querySelector('button');
+  const originalText = btn.textContent;
+  btn.innerHTML = 'Adding... <span class="loading-spinner"></span>';
+  btn.disabled = true;
+  
+  const formData = new FormData(this);
+  const newOrder = parseInt(formData.get('display_order'));
+  
+  const data = {
+    question_text: formData.get('question_text'),
+    question_type: formData.get('question_type'),
+    display_order: newOrder,
+    is_required: parseInt(formData.get('is_required'))
+  };
+  
+  // ⭐ NEW: Check if position is occupied and show confirmation
+  const existingQuestion = questionsData.find(q => q.display_order === newOrder);
+  
+  if (existingQuestion) {
+    const affectedQuestions = questionsData.filter(q => q.display_order >= newOrder);
+    
+    let confirmMsg = `⚠️ POSITION CONFLICT DETECTED\n\n`;
+    confirmMsg += `A question already exists at position ${newOrder}:\n`;
+    confirmMsg += `"${existingQuestion.question_text.substring(0, 60)}..."\n\n`;
+    confirmMsg += `Adding your new question here will automatically shift:\n`;
+    confirmMsg += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+    
+    affectedQuestions.forEach((q, index) => {
+      if (index < 3) { // Show first 3 affected questions
+        confirmMsg += `• Position ${q.display_order} → ${q.display_order + 1}\n`;
+        confirmMsg += `  "${q.question_text.substring(0, 50)}..."\n\n`;
+      }
+    });
+    
+    if (affectedQuestions.length > 3) {
+      confirmMsg += `... and ${affectedQuestions.length - 3} more question(s)\n\n`;
+    }
+    
+    confirmMsg += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+    confirmMsg += `Do you want to continue?`;
+    
+    if (!confirm(confirmMsg)) {
+      btn.textContent = originalText;
+      btn.disabled = false;
+      return;
+    }
+  }
+  
+  // Proceed with adding the question
+  fetch('/api/questions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (existingQuestion) {
+      showMessage('questionMessage', 
+        `✅ Question added at position ${newOrder}! All subsequent questions have been automatically shifted down.`, 
+        'success');
+    } else {
+      showMessage('questionMessage', 
+        `✅ Question added successfully at position ${newOrder}!`, 
+        'success');
+    }
+    this.reset();
+    loadQuestions();
+  })
+  .catch(err => {
+    showMessage('questionMessage', '❌ Failed to add question. Please try again.', 'error');
+    console.error('Error adding question:', err);
+  })
+  .finally(() => {
+    btn.textContent = originalText;
+    btn.disabled = false;
+  });
+});
+
+function loadQuestions() {
+  const tbody = document.getElementById('questionsList');
+  tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Loading...</td></tr>';
+  
+  fetch('/api/questions')
+    .then(res => res.json())
+    .then(data => {
+      questionsData = data.sort((a, b) => a.display_order - b.display_order);
+      renderQuestions();
+    })
+    .catch(err => {
+      tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No questions available yet. The API endpoint needs to be implemented in your server.</td></tr>';
+    });
+}
+
+function renderQuestions() {
+  const tbody = document.getElementById('questionsList');
+  tbody.innerHTML = '';
+  
+  if (!questionsData.length) {
+    tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No questions found</td></tr>';
+    return;
+  }
+  
+  questionsData.forEach((q, index) => {
+    const row = document.createElement('tr');
+    row.className = 'draggable-row';
+    row.draggable = true;
+    row.dataset.questionId = q.id;
+    row.dataset.index = index;
+    
+    row.innerHTML = `
+      <td style="text-align: center;">
+        <span class="drag-handle" title="Drag to reorder">☰</span>
+      </td>
+      <td><span class="order-badge">${q.display_order}</span></td>
+      <td>${escapeHtml(q.question_text)}</td>
+      <td><strong>${q.question_type}</strong></td>
+      <td>${q.is_required ? 'Yes' : 'No'}</td>
+      <td>${q.is_active ? '✅ Active' : '❌ Inactive'}</td>
+      <td>
+        <div class="action-cell">
+          <button class="btn-secondary" style="min-width: 60px;" onclick="editQuestion(${q.id})">✏️ Edit</button>
+          <button class="btn-danger" onclick="deleteQuestion(${q.id})">🗑 Delete</button>
+        </div>
+      </td>
+    `;
+    
+    // Add drag event listeners
+    row.addEventListener('dragstart', handleDragStart);
+    row.addEventListener('dragover', handleDragOver);
+    row.addEventListener('drop', handleDrop);
+    row.addEventListener('dragend', handleDragEnd);
+    row.addEventListener('dragenter', handleDragEnter);
+    row.addEventListener('dragleave', handleDragLeave);
+    
+    tbody.appendChild(row);
+  });
+}
+
+function handleDragStart(e) {
+  draggedElement = this;
+  this.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/html', this.innerHTML);
+}
+
+function handleDragOver(e) {
+  if (e.preventDefault) {
+    e.preventDefault();
+  }
+  e.dataTransfer.dropEffect = 'move';
+  return false;
+}
+
+function handleDragEnter(e) {
+  if (this !== draggedElement) {
+    this.classList.add('drag-over');
+  }
+}
+
+function handleDragLeave(e) {
+  this.classList.remove('drag-over');
+}
+
+function handleDrop(e) {
+  if (e.stopPropagation) {
+    e.stopPropagation();
+  }
+  
+  if (draggedElement !== this) {
+    const draggedIndex = parseInt(draggedElement.dataset.index);
+    const targetIndex = parseInt(this.dataset.index);
+    
+    // Reorder the array
+    const draggedItem = questionsData[draggedIndex];
+    questionsData.splice(draggedIndex, 1);
+    questionsData.splice(targetIndex, 0, draggedItem);
+    
+    // Update display_order for all questions
+    questionsData.forEach((q, index) => {
+      q.display_order = index + 1;
+    });
+    
+    // Re-render the table
+    renderQuestions();
+    
+    // Save new order to server
+    saveQuestionOrder();
+  }
+  
+  return false;
+}
+
+function handleDragEnd(e) {
+  this.classList.remove('dragging');
+  
+  // Remove all drag-over classes
+  document.querySelectorAll('.draggable-row').forEach(row => {
+    row.classList.remove('drag-over');
+  });
+}
+
+function saveQuestionOrder() {
+  const orderData = questionsData.map(q => ({
+    id: q.id,
+    display_order: q.display_order
+  }));
+  
+  fetch('/api/questions/reorder', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ questions: orderData })
+  })
+  .then(res => res.json())
+  .then(data => {
+    showMessage('questionMessage', '✅ Question order saved successfully!', 'success');
+  })
+  .catch(err => {
+    showMessage('questionMessage', '❌ Failed to save question order. Please try again.', 'error');
+    // Reload questions to restore original order
+    loadQuestions();
+  });
+}
+
+function deleteQuestion(id) {
+  const question = questionsData.find(q => q.id === id);
+  if (!question) {
+    alert('Question not found');
+    return;
+  }
+  
+  const position = question.display_order;
+  const questionsBelow = questionsData.filter(q => q.display_order > position);
+  
+  let confirmMsg = `⚠️ DELETE QUESTION\n\n`;
+  confirmMsg += `You're about to delete:\n`;
+  confirmMsg += `Position ${position}: "${question.question_text.substring(0, 60)}..."\n\n`;
+  
+  if (questionsBelow.length > 0) {
+    confirmMsg += `This will automatically shift the following questions UP:\n`;
+    confirmMsg += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+    
+    questionsBelow.forEach((q, index) => {
+      if (index < 3) {
+        confirmMsg += `• Position ${q.display_order} → ${q.display_order - 1}\n`;
+        confirmMsg += `  "${q.question_text.substring(0, 50)}..."\n\n`;
+      }
+    });
+    
+    if (questionsBelow.length > 3) {
+      confirmMsg += `... and ${questionsBelow.length - 3} more question(s)\n\n`;
+    }
+    confirmMsg += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+  }
+  
+  confirmMsg += `\nThis action CANNOT be undone. Continue?`;
+  
+  if (!confirm(confirmMsg)) {
+    return;
+  }
+  
+  // Proceed with deletion
+  fetch(`/api/questions/${id}`, { method: 'DELETE' })
+    .then(res => res.json())
+    .then(data => {
+      if (questionsBelow.length > 0) {
+        showMessage('questionMessage', 
+          `✅ Question deleted! ${questionsBelow.length} question(s) have been automatically shifted up.`, 
+          'success');
+      } else {
+        showMessage('questionMessage', '✅ Question deleted successfully!', 'success');
+      }
+      loadQuestions();
+    })
+    .catch(err => {
+      showMessage('questionMessage', '❌ Failed to delete question. Please try again.', 'error');
+      console.error('Error deleting question:', err);
+    });
+}
+
+function editQuestion(id) {
+  const question = questionsData.find(q => q.id === id);
+  if (!question) {
+    alert('Question not found');
+    return;
+  }
+  
+  document.getElementById('editQuestionId').value = question.id;
+  document.getElementById('editQuestionText').value = question.question_text;
+  document.getElementById('editQuestionType').value = question.question_type;
+  document.getElementById('editQuestionOrder').value = question.display_order;
+  document.getElementById('editQuestionRequired').value = question.is_required ? '1' : '0';
+  document.getElementById('editQuestionActive').value = question.is_active ? '1' : '0';
+  
+  document.getElementById('editQuestionModal').classList.add('active');
+}
+
+document.getElementById('editQuestionForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  const id = parseInt(document.getElementById('editQuestionId').value);
+  const newOrder = parseInt(document.getElementById('editQuestionOrder').value);
+  
+  const currentQuestion = questionsData.find(q => q.id === id);
+  const oldOrder = currentQuestion ? currentQuestion.display_order : null;
+  
+  const updateData = {
+    question_text: document.getElementById('editQuestionText').value,
+    question_type: document.getElementById('editQuestionType').value,
+    display_order: newOrder,
+    is_required: parseInt(document.getElementById('editQuestionRequired').value),
+    is_active: parseInt(document.getElementById('editQuestionActive').value),
+    old_order: oldOrder  // ⭐ NEW: Send old order to backend for proper reordering
+  };
+  
+  // ⭐ NEW: Check if order changed and if new position is occupied by another question
+  if (oldOrder !== null && oldOrder !== newOrder) {
+    const existingQuestion = questionsData.find(q => q.display_order === newOrder && q.id !== id);
+    
+    if (existingQuestion) {
+      let confirmMsg = `⚠️ POSITION CHANGE DETECTED\n\n`;
+      confirmMsg += `You're moving this question from position ${oldOrder} to position ${newOrder}.\n\n`;
+      confirmMsg += `This will affect the following questions:\n`;
+      confirmMsg += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+      
+      if (newOrder < oldOrder) {
+        // Moving up - questions between new and old will shift down
+        const affected = questionsData.filter(q => q.display_order >= newOrder && q.display_order < oldOrder);
+        affected.forEach((q, index) => {
+          if (index < 3) {
+            confirmMsg += `• Position ${q.display_order} → ${q.display_order + 1}\n`;
+            confirmMsg += `  "${q.question_text.substring(0, 50)}..."\n\n`;
+          }
+        });
+        if (affected.length > 3) {
+          confirmMsg += `... and ${affected.length - 3} more\n\n`;
+        }
+      } else {
+        // Moving down - questions between old and new will shift up
+        const affected = questionsData.filter(q => q.display_order > oldOrder && q.display_order <= newOrder);
+        affected.forEach((q, index) => {
+          if (index < 3) {
+            confirmMsg += `• Position ${q.display_order} → ${q.display_order - 1}\n`;
+            confirmMsg += `  "${q.question_text.substring(0, 50)}..."\n\n`;
+          }
+        });
+        if (affected.length > 3) {
+          confirmMsg += `... and ${affected.length - 3} more\n\n`;
+        }
+      }
+      
+      confirmMsg += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+      confirmMsg += `Continue with this change?`;
+      
+      if (!confirm(confirmMsg)) {
+        return;
+      }
+    }
+  }
+  
+  // Proceed with update
+  fetch(`/api/questions/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(updateData)
+  })
+  .then(res => res.json())
+  .then(data => {
+    document.getElementById('editQuestionModal').classList.remove('active');
+    
+    if (oldOrder !== null && oldOrder !== newOrder) {
+      showMessage('questionMessage', 
+        `✅ Question updated and moved from position ${oldOrder} to ${newOrder}! Other questions have been automatically adjusted.`, 
+        'success');
+    } else {
+      showMessage('questionMessage', '✅ Question updated successfully!', 'success');
+    }
+    
+    loadQuestions();
+  })
+  .catch(err => {
+    alert('❌ Failed to update question. Please try again.');
+    console.error('Error updating question:', err);
+  });
+});
+
+document.querySelector('.btn-edit-question-cancel').addEventListener('click', () => {
+  document.getElementById('editQuestionModal').classList.remove('active');
+});
+
+// FEEDBACK MANAGEMENT
+let allFeedbackData = [];
+let filteredFeedbackData = [];
+
+function loadFeedback() {
+  const body = document.getElementById('feedbackBody');
+  body.innerHTML = `
+    <tr>
+      <td colspan="14" class="empty-state">
+        <div class="empty-state-icon">⏳</div>
+        <div class="empty-state-text">Loading feedback data...</div>
+      </td>
+    </tr>
+  `;
+
+  fetch('/admin/feedback')
+    .then(res => res.json())
+    .then(data => {
+      allFeedbackData = data;
+      feedbackData = data;
+      
+      populateFacultyFilter(data);
+      applyFilters();
+    })
+    .catch(() => {
+      body.innerHTML = `
+        <tr>
+          <td colspan="14" class="empty-state">
+            <div class="empty-state-icon">❌</div>
+            <div class="empty-state-text">Failed to load feedback data</div>
+          </td>
+        </tr>
+      `;
+    });
+}
+
+function populateFacultyFilter(data) {
+  const filterSelect = document.getElementById('facultyFilter');
+  const facultyNames = [...new Set(data.map(f => f.faculty_name))].sort();
+  
+  filterSelect.innerHTML = '<option value="">All Faculty Members</option>';
+  facultyNames.forEach(name => {
+    const option = document.createElement('option');
+    option.value = name;
+    option.textContent = name;
+    filterSelect.appendChild(option);
+  });
+}
+
+function applyFilters() {
+  const timePeriod = document.getElementById('timePeriodFilter').value;
+  const facultyName = document.getElementById('facultyFilter').value;
+  
+  let filtered = [...allFeedbackData];
+  
+  // Apply time filter
+  const cutoffDate = getTimePeriodDate(timePeriod);
+  if (cutoffDate) {
+    filtered = filtered.filter(f => {
+      if (f.created_at) {
+        const feedbackDate = new Date(f.created_at);
+        return feedbackDate >= cutoffDate;
+      }
+      return true;
+    });
+  }
+  
+  // Apply faculty filter
+  if (facultyName !== '') {
+    filtered = filtered.filter(f => f.faculty_name === facultyName);
+  }
+  
+  filteredFeedbackData = filtered;
+  feedbackData = filtered;
+  
+  // Update time period label
+  document.getElementById('timePeriodLabel').textContent = getTimePeriodLabel(timePeriod);
+  
+  renderFeedbackTable(filtered);
+}
+
+function renderFeedbackTable(data) {
+  const body = document.getElementById('feedbackBody');
+  body.innerHTML = '';
+
+  if (!data.length) {
+    body.innerHTML = `
+      <tr>
+        <td colspan="14" class="empty-state">
+          <div class="empty-state-icon">📭</div>
+          <div class="empty-state-text">No feedback responses found for selected filters</div>
+        </td>
+      </tr>
+    `;
+    document.getElementById('statsGrid').style.display = 'none';
+    return;
+  }
+
+  const totalFeedback = data.length;
+  const avgRating = (data.reduce((sum, f) => {
+    return sum + (f.q1_regularity + f.q2_syllabus + f.q3_conceptual + 
+                 f.q4_practical + f.q5_communication + f.q6_teaching + 
+                 f.q7_contribution) / 7;
+  }, 0) / totalFeedback).toFixed(1);
+
+  // Calculate faculty ratings
+  const facultyRatings = {};
+  data.forEach(f => {
+    if (!facultyRatings[f.faculty_name]) {
+      facultyRatings[f.faculty_name] = { total: 0, count: 0 };
+    }
+    const avg = (f.q1_regularity + f.q2_syllabus + f.q3_conceptual + 
+                f.q4_practical + f.q5_communication + f.q6_teaching + 
+                f.q7_contribution) / 7;
+    facultyRatings[f.faculty_name].total += avg;
+    facultyRatings[f.faculty_name].count += 1;
+  });
+
+  let topFaculty = '-';
+  let topRating = 0;
+  let topFacultyCount = 0;
+  
+  for (const [name, stats] of Object.entries(facultyRatings)) {
+    const avg = stats.total / stats.count;
+    if (avg > topRating) {
+      topRating = avg;
+      topFaculty = name;
+      topFacultyCount = stats.count;
+    }
+  }
+
+  // Update statistics
+  document.getElementById('totalFeedback').textContent = totalFeedback;
+  document.getElementById('avgRating').textContent = avgRating;
+  document.getElementById('topFaculty').textContent = topFaculty;
+  document.getElementById('topFacultyRating').textContent = topRating > 0 ? `Avg: ${topRating.toFixed(2)}/5` : '-';
+  document.getElementById('topFacultyResponseCount').textContent = topFacultyCount;
+  document.getElementById('statsGrid').style.display = 'grid';
+
+  // Render table rows
+  data.forEach(f => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td><strong>${f.id}</strong></td>
+      <td>${escapeHtml(f.student_name)}</td>
+      <td>${escapeHtml(f.student_code)}</td>
+      <td>${escapeHtml(f.course_name)}</td>
+      <td>${escapeHtml(f.faculty_name)}</td>
+      <td class="rating-cell rating-${f.q1_regularity}">${f.q1_regularity}</td>
+      <td class="rating-cell rating-${f.q2_syllabus}">${f.q2_syllabus}</td>
+      <td class="rating-cell rating-${f.q3_conceptual}">${f.q3_conceptual}</td>
+      <td class="rating-cell rating-${f.q4_practical}">${f.q4_practical}</td>
+      <td class="rating-cell rating-${f.q5_communication}">${f.q5_communication}</td>
+      <td class="rating-cell rating-${f.q6_teaching}">${f.q6_teaching}</td>
+      <td class="rating-cell rating-${f.q7_contribution}">${f.q7_contribution}</td>
+      <td style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${escapeHtml(f.comment || 'No comments')}">${escapeHtml(f.comment || '-')}</td>
+      <td>
+        <div class="action-cell">
+          <button class="btn-danger" onclick="deleteFeedback(${f.id}, '${escapeHtml(f.student_name)}')">🗑 Delete</button>
+        </div>
+      </td>
+    `;
+    body.appendChild(row);
+  });
+}
+
+function deleteFeedback(id, studentName) {
+  showModal(
+    'Delete Feedback',
+    `Are you sure you want to delete feedback from "${studentName}"? This action cannot be undone.`,
+    () => {
+      fetch(`/api/feedback/${id}`, { method: 'DELETE' })
+        .then(res => res.json())
+        .then(data => {
+          loadFeedback();
+        })
+        .catch(err => {
+          alert('Failed to delete feedback');
+        });
+    }
+  );
+}
+
+// EDIT FACULTY
+function editFaculty(id) {
+  fetch('/api/faculties')
+    .then(res => res.json())
+    .then(data => {
+      const faculty = data.find(f => f.id === id);
+      if (!faculty) {
+        alert('Faculty not found');
+        return;
+      }
+      
+      document.getElementById('editFacultyId').value = faculty.id;
+      document.getElementById('editFacultyName').value = faculty.faculty_name;
+      document.getElementById('editFacultyDesignation').value = faculty.designation;
+      document.getElementById('editFacultyDepartment').value = faculty.department;
+      
+      document.getElementById('editFacultyModal').classList.add('active');
+    });
+}
+
+document.getElementById('editFacultyForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  const id = document.getElementById('editFacultyId').value;
+  const updateData = {
+    name: document.getElementById('editFacultyName').value,
+    designation: document.getElementById('editFacultyDesignation').value,
+    department: document.getElementById('editFacultyDepartment').value
+  };
+  
+  fetch(`/api/faculty/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(updateData)
+  })
+  .then(res => res.json())
+  .then(data => {
+    document.getElementById('editFacultyModal').classList.remove('active');
+    showMessage('facultyMessage', 'Faculty updated successfully!', 'success');
+    loadFaculty();
+  })
+  .catch(err => {
+    alert('Failed to update faculty');
+  });
+});
+
+document.querySelector('.btn-edit-faculty-cancel').addEventListener('click', () => {
+  document.getElementById('editFacultyModal').classList.remove('active');
+});
+
+// EDIT STUDENT
+function editStudent(id) {
+  fetch('/api/students')
+    .then(res => res.json())
+    .then(data => {
+      const student = data.find(s => s.id === id);
+      if (!student) {
+        alert('Student not found');
+        return;
+      }
+      
+      document.getElementById('editStudentId').value = student.id;
+      document.getElementById('editStudentCode').value = student.student_code;
+      document.getElementById('editStudentName').value = student.student_name;
+      document.getElementById('editStudentUsername').value = student.username;
+      document.getElementById('editStudentDepartment').value = student.department;
+      document.getElementById('editStudentSemester').value = student.semester;
+      
+      document.getElementById('editStudentModal').classList.add('active');
+    });
+}
+
+document.getElementById('editStudentForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  const id = document.getElementById('editStudentId').value;
+  const updateData = {
+    student_code: document.getElementById('editStudentCode').value,
+    student_name: document.getElementById('editStudentName').value,
+    username: document.getElementById('editStudentUsername').value,
+    department: document.getElementById('editStudentDepartment').value,
+    semester: parseInt(document.getElementById('editStudentSemester').value)
+  };
+  
+  fetch(`/api/student/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(updateData)
+  })
+  .then(res => res.json())
+  .then(data => {
+    document.getElementById('editStudentModal').classList.remove('active');
+    showMessage('studentMessage', 'Student updated successfully!', 'success');
+    loadStudents();
+  })
+  .catch(err => {
+    alert('Failed to update student');
+  });
+});
+
+document.querySelector('.btn-edit-student-cancel').addEventListener('click', () => {
+  document.getElementById('editStudentModal').classList.remove('active');
+});
+
+// EDIT COURSE
+function editCourse(id) {
+  fetch('/api/courses')
+    .then(res => res.json())
+    .then(data => {
+      const course = data.find(c => c.id === id);
+      if (!course) {
+        alert('Course not found');
+        return;
+      }
+      
+      document.getElementById('editCourseId').value = course.id;
+      document.getElementById('editCourseName').value = course.course_name;
+      document.getElementById('editCourseProgramme').value = course.programme;
+      document.getElementById('editCourseSemester').value = course.semester;
+      document.getElementById('editCourseFacultyId').value = course.faculty_id;
+      
+      document.getElementById('editCourseModal').classList.add('active');
+    });
+}
+
+document.getElementById('editCourseForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  const id = document.getElementById('editCourseId').value;
+  const updateData = {
+    course_name: document.getElementById('editCourseName').value,
+    programme: document.getElementById('editCourseProgramme').value,
+    semester: parseInt(document.getElementById('editCourseSemester').value),
+    faculty_id: parseInt(document.getElementById('editCourseFacultyId').value)
+  };
+  
+  fetch(`/api/course/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(updateData)
+  })
+  .then(res => res.json())
+  .then(data => {
+    document.getElementById('editCourseModal').classList.remove('active');
+    showMessage('courseMessage', 'Course updated successfully!', 'success');
+    loadCourses();
+  })
+  .catch(err => {
+    alert('Failed to update course');
+  });
+});
+
+document.querySelector('.btn-edit-course-cancel').addEventListener('click', () => {
+  document.getElementById('editCourseModal').classList.remove('active');
+});
+
+function exportToCSV() {
+  if (!feedbackData.length) {
+    alert('No data to export');
+    return;
+  }
+
+  const headers = ['ID', 'Student', 'Code', 'Course', 'Faculty', 'Q1_Regularity', 'Q2_Syllabus', 
+                   'Q3_Conceptual', 'Q4_Practical', 'Q5_Communication', 'Q6_Teaching', 
+                   'Q7_Contribution', 'Comments'];
+  
+  const rows = feedbackData.map(f => [
+    f.id,
+    f.student_name,
+    f.student_code,
+    f.course_name,
+    f.faculty_name,
+    f.q1_regularity,
+    f.q2_syllabus,
+    f.q3_conceptual,
+    f.q4_practical,
+    f.q5_communication,
+    f.q6_teaching,
+    f.q7_contribution,
+    f.comment || ''
+  ]);
+
+  const csv = [headers, ...rows].map(row => 
+    row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')
+  ).join('\n');
+
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  
+  const timePeriod = document.getElementById('timePeriodFilter').value;
+  const fileName = `feedback_${getTimePeriodLabel(timePeriod).replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.csv`;
+  a.download = fileName;
+  a.click();
+  window.URL.revokeObjectURL(url);
+}
+
+function escapeHtml(text) {
+  const map = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  };
+  return String(text).replace(/[&<>"']/g, m => map[m]);
+}
+
+// ============================================
+// VISUALIZATION AND CHARTS
+// ============================================
+let vizAllFeedbackData = [];
+let vizFilteredFeedbackData = [];
+let chartInstances = {};
+
+function loadVisualizationData() {
+  fetch('/admin/feedback')
+    .then(res => res.json())
+    .then(data => {
+      vizAllFeedbackData = data;
+      vizFilteredFeedbackData = data;
+      
+      populateVisualizationFilters(data);
+      applyVisualizationFilters();
+    })
+    .catch(err => {
+      console.error('Failed to load feedback data for visualization', err);
+    });
+}
+
+function populateVisualizationFilters(data) {
+  // Populate faculty filter
+  const facultyFilter = document.getElementById('vizFacultyFilter');
+  const facultyNames = [...new Set(data.map(f => f.faculty_name))].sort();
+  facultyFilter.innerHTML = '<option value="">All Faculty Members</option>';
+  facultyNames.forEach(name => {
+    const option = document.createElement('option');
+    option.value = name;
+    option.textContent = name;
+    facultyFilter.appendChild(option);
+  });
+  
+  // Populate department filter
+  const deptFilter = document.getElementById('vizDepartmentFilter');
+  const depts = [...new Set(data.map(f => f.student_dept || 'Unknown'))].sort();
+  deptFilter.innerHTML = '<option value="">All Departments</option>';
+  depts.forEach(dept => {
+    const option = document.createElement('option');
+    option.value = dept;
+    option.textContent = dept;
+    deptFilter.appendChild(option);
+  });
+}
+
+function applyVisualizationFilters() {
+  const timePeriod = document.getElementById('vizTimePeriodFilter').value;
+  const facultyName = document.getElementById('vizFacultyFilter').value;
+  const department = document.getElementById('vizDepartmentFilter').value;
+  
+  let filtered = [...vizAllFeedbackData];
+  
+  // Apply time filter
+  const cutoffDate = getTimePeriodDate(timePeriod);
+  if (cutoffDate) {
+    filtered = filtered.filter(f => {
+      if (f.created_at) {
+        const feedbackDate = new Date(f.created_at);
+        return feedbackDate >= cutoffDate;
+      }
+      return true;
+    });
+  }
+  
+  // Apply faculty filter
+  if (facultyName !== '') {
+    filtered = filtered.filter(f => f.faculty_name === facultyName);
+  }
+  
+  // Apply department filter
+  if (department !== '') {
+    filtered = filtered.filter(f => (f.student_dept || 'Unknown') === department);
+  }
+  
+  vizFilteredFeedbackData = filtered;
+  renderVisualizationCharts(filtered);
+}
+
+function renderVisualizationCharts(data) {
+  if (!data.length) {
+    alert('No data available for visualization with selected filters');
+    return;
+  }
+  
+  // Update statistics
+  updateVisualizationStats(data);
+  
+  // Render charts
+  renderRatingDistributionChart(data);
+  renderFacultyRatingsChart(data);
+  renderFacultyComparisonChart(data);
+  renderQuestionsRatingsChart(data);
+  renderDepartmentDistributionChart(data);
+  renderTrendChart(data);
+  renderSemesterDistributionChart(data);
+}
+
+function updateVisualizationStats(data) {
+  const totalResponses = data.length;
+  
+  const allRatings = [];
+  data.forEach(f => {
+    allRatings.push(f.q1_regularity, f.q2_syllabus, f.q3_conceptual, 
+                   f.q4_practical, f.q5_communication, f.q6_teaching, 
+                   f.q7_contribution);
+  });
+  
+  const overallAverage = (allRatings.reduce((a, b) => a + b, 0) / allRatings.length).toFixed(1);
+  const highestRating = Math.max(...allRatings);
+  const lowestRating = Math.min(...allRatings);
+  
+  // Find faculty with highest and lowest ratings
+  const facultyRatings = {};
+  data.forEach(f => {
+    if (!facultyRatings[f.faculty_name]) {
+      facultyRatings[f.faculty_name] = { total: 0, count: 0 };
+    }
+    const avg = (f.q1_regularity + f.q2_syllabus + f.q3_conceptual + 
+                f.q4_practical + f.q5_communication + f.q6_teaching + 
+                f.q7_contribution) / 7;
+    facultyRatings[f.faculty_name].total += avg;
+    facultyRatings[f.faculty_name].count += 1;
+  });
+  
+  let topFaculty = '-';
+  let bottomFaculty = '-';
+  let topRating = 0;
+  let bottomRating = 5;
+  
+  for (const [name, stats] of Object.entries(facultyRatings)) {
+    const avg = stats.total / stats.count;
+    if (avg > topRating) {
+      topRating = avg;
+      topFaculty = name;
+    }
+    if (avg < bottomRating) {
+      bottomRating = avg;
+      bottomFaculty = name;
+    }
+  }
+  
+  document.getElementById('vizTotalResponses').textContent = totalResponses;
+  document.getElementById('vizOverallAverage').textContent = overallAverage;
+  document.getElementById('vizHighestRating').textContent = topRating > 0 ? topRating.toFixed(2) : '-';
+  document.getElementById('vizLowestRating').textContent = bottomRating < 5 ? bottomRating.toFixed(2) : '-';
+  document.getElementById('vizHighestFaculty').textContent = topFaculty !== '-' ? topFaculty : '';
+  document.getElementById('vizLowestFaculty').textContent = bottomFaculty !== '-' ? bottomFaculty : '';
+  document.getElementById('vizResponsesTrend').textContent = data.length > 0 ? '✅ All data loaded' : 'No data available';
+  
+  // Generate key insights
+  generateKeyInsights(data, overallAverage, topFaculty, bottomFaculty);
+}
+
+function renderRatingDistributionChart(data) {
+  const allRatings = [];
+  data.forEach(f => {
+    allRatings.push(f.q1_regularity, f.q2_syllabus, f.q3_conceptual, 
+                   f.q4_practical, f.q5_communication, f.q6_teaching, 
+                   f.q7_contribution);
+  });
+  
+  const distribution = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+  allRatings.forEach(rating => distribution[rating]++);
+  
+  const ctx = document.getElementById('ratingDistributionChart').getContext('2d');
+  
+  if (chartInstances.ratingDistribution) {
+    chartInstances.ratingDistribution.destroy();
+  }
+  
+  chartInstances.ratingDistribution = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Poor (1)', 'Fair (2)', 'Good (3)', 'Very Good (4)', 'Excellent (5)'],
+      datasets: [{
+        label: 'Number of Ratings',
+        data: [distribution[1], distribution[2], distribution[3], distribution[4], distribution[5]],
+        backgroundColor: ['#ff6b6b', '#ffa94d', '#ffd93d', '#6bcf7f', '#00cc96'],
+        borderColor: '#fff',
+        borderWidth: 2,
+        borderRadius: 5
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      indexAxis: 'x',
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: 'rgba(22,24,30,0.95)',
+          titleColor: '#ffffff',
+          bodyColor: '#e6eef8',
+          borderColor: 'rgba(255,255,255,0.06)',
+          borderWidth: 1,
+          padding: 10,
+          titleFont: { size: 13, weight: 700 },
+          bodyFont: { size: 12 },
+          cornerRadius: 6
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: { stepSize: 1, color: '#9aa3b2', font: { size: 12 } },
+          grid: { color: 'rgba(255,255,255,0.03)' }
+        },
+        x: {
+          ticks: { color: '#9aa3b2', font: { size: 12 } },
+          grid: { display: false }
+        }
+      }
+    }
+  });
+}
+
+function renderFacultyRatingsChart(data) {
+  const facultyRatings = {};
+  
+  data.forEach(f => {
+    if (!facultyRatings[f.faculty_name]) {
+      facultyRatings[f.faculty_name] = { total: 0, count: 0 };
+    }
+    const avg = (f.q1_regularity + f.q2_syllabus + f.q3_conceptual + 
+                f.q4_practical + f.q5_communication + f.q6_teaching + 
+                f.q7_contribution) / 7;
+    facultyRatings[f.faculty_name].total += avg;
+    facultyRatings[f.faculty_name].count += 1;
+  });
+  
+  const labels = Object.keys(facultyRatings).sort();
+  const ratings = labels.map(name => (facultyRatings[name].total / facultyRatings[name].count).toFixed(2));
+  
+  const ctx = document.getElementById('facultyRatingsChart').getContext('2d');
+  
+  if (chartInstances.facultyRatings) {
+    chartInstances.facultyRatings.destroy();
+  }
+  
+  chartInstances.facultyRatings = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Average Rating',
+        data: ratings,
+        backgroundColor: ratings.map(r => r >= 4 ? '#00cc96' : r >= 3 ? '#ffd93d' : '#ff6b6b'),
+        borderColor: '#fff',
+        borderWidth: 2,
+        borderRadius: 5
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: 'rgba(0,0,0,0.8)',
+          padding: 12,
+          callbacks: {
+            label: function(context) {
+              return 'Rating: ' + context.parsed.x.toFixed(2) + '/5';
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          beginAtZero: true,
+          min: 0,
+          max: 5,
+          grid: { color: 'rgba(0,0,0,0.05)' }
+        },
+        y: {
+          grid: { display: false }
+        }
+      }
+    }
+  });
+}
+
+function renderFacultyComparisonChart(data) {
+  // Aggregate data by faculty and dimension
+  const facultyData = {};
+  
+  data.forEach(f => {
+    const facultyName = f.faculty_name;
+    if (!facultyData[facultyName]) {
+      facultyData[facultyName] = {
+        regularity: { sum: 0, count: 0 },
+        syllabus: { sum: 0, count: 0 },
+        conceptual: { sum: 0, count: 0 },
+        practical: { sum: 0, count: 0 },
+        communication: { sum: 0, count: 0 },
+        teaching: { sum: 0, count: 0 },
+        contribution: { sum: 0, count: 0 }
+      };
+    }
+    
+    facultyData[facultyName].regularity.sum += f.q1_regularity;
+    facultyData[facultyName].regularity.count += 1;
+    facultyData[facultyName].syllabus.sum += f.q2_syllabus;
+    facultyData[facultyName].syllabus.count += 1;
+    facultyData[facultyName].conceptual.sum += f.q3_conceptual;
+    facultyData[facultyName].conceptual.count += 1;
+    facultyData[facultyName].practical.sum += f.q4_practical;
+    facultyData[facultyName].practical.count += 1;
+    facultyData[facultyName].communication.sum += f.q5_communication;
+    facultyData[facultyName].communication.count += 1;
+    facultyData[facultyName].teaching.sum += f.q6_teaching;
+    facultyData[facultyName].teaching.count += 1;
+    facultyData[facultyName].contribution.sum += f.q7_contribution;
+    facultyData[facultyName].contribution.count += 1;
+  });
+  
+  const labels = ['Class Regularity', 'Syllabus Coverage', 'Conceptual Clarity', 'Practical Application', 'Communication Skills', 'Teaching Effectiveness', 'Department Contribution'];
+  const professionalColors = [
+    '#2E5090', '#D32F2F', '#7B1FA2', '#00796B', '#E64A19', '#0097A7', '#F57C00',
+    '#5E35B1', '#1565C0', '#00838F', '#5D4037', '#283593', '#C62828', '#00695C'
+  ];
+  
+  const datasets = Object.keys(facultyData).sort().map((facultyName, index) => {
+    const data = facultyData[facultyName];
+    const avgRating = [
+      (data.regularity.sum / data.regularity.count).toFixed(2),
+      (data.syllabus.sum / data.syllabus.count).toFixed(2),
+      (data.conceptual.sum / data.conceptual.count).toFixed(2),
+      (data.practical.sum / data.practical.count).toFixed(2),
+      (data.communication.sum / data.communication.count).toFixed(2),
+      (data.teaching.sum / data.teaching.count).toFixed(2),
+      (data.contribution.sum / data.contribution.count).toFixed(2)
+    ];
+    
+    return {
+      label: facultyName,
+      data: avgRating,
+      borderColor: professionalColors[index % professionalColors.length],
+      backgroundColor: professionalColors[index % professionalColors.length] + '08',
+      borderWidth: 3.5,
+      fill: true,
+      tension: 0.45,
+      pointRadius: 6,
+      pointBackgroundColor: professionalColors[index % professionalColors.length],
+      pointBorderColor: '#ffffff',
+      pointBorderWidth: 2.5,
+      pointHoverRadius: 8,
+      pointHoverBorderWidth: 3,
+      segment: {
+        borderDash: []
+      }
+    };
+  });
+  
+  const ctx = document.getElementById('facultyComparisonChart').getContext('2d');
+  
+  if (chartInstances.facultyComparison) {
+    chartInstances.facultyComparison.destroy();
+  }
+  
+  chartInstances.facultyComparison = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: datasets
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      layout: {
+        padding: { top: 10, bottom: 5, left: 5, right: 5 }
+      },
+      interaction: {
+        mode: 'index',
+        intersect: false
+      },
+      plugins: {
+        filler: {
+          propagate: false
+        },
+        legend: {
+          display: true,
+          position: 'top',
+          align: 'center',
+          labels: {
+            padding: 20,
+            font: {
+              size: 13,
+              weight: 600,
+              family: "'Segoe UI', system-ui, sans-serif"
+            },
+            usePointStyle: true,
+            pointStyle: 'circle',
+            boxWidth: 8,
+            boxHeight: 8,
+            color: '#333'
+          }
+        },
+        tooltip: {
+          enabled: true,
+          backgroundColor: 'rgba(30, 30, 46, 0.95)',
+          borderColor: 'rgba(255, 255, 255, 0.2)',
+          borderWidth: 1,
+          padding: 14,
+          displayColors: true,
+          cornerRadius: 6,
+          titleFont: { size: 13, weight: 700, family: "'Segoe UI', system-ui, sans-serif" },
+          bodyFont: { size: 12, weight: 500, family: "'Segoe UI', system-ui, sans-serif" },
+          titleColor: '#fff',
+          bodyColor: '#fff',
+          borderSkipped: false,
+          callbacks: {
+            title: function(context) {
+              return context[0].label;
+            },
+            label: function(context) {
+              const value = parseFloat(context.parsed.y);
+              let status = '●';
+              if (value >= 4.5) status = '⭐⭐ Excellent';
+              else if (value >= 4) status = '⭐ Very Good';
+              else if (value >= 3) status = '✓ Good';
+              else status = '⚠ Needs Improvement';
+              return context.dataset.label + ': ' + value + '/5 (' + status + ')';
+            },
+            afterLabel: function(context) {
+              return '';
+            }
+          }
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          min: 0,
+          max: 5,
+          position: 'left',
+          ticks: {
+            stepSize: 1,
+            font: { size: 12, weight: 500 },
+            color: '#666',
+            padding: 10,
+            callback: function(value) {
+              if (value === 0) return 'Poor';
+              if (value === 1) return '1.0';
+              if (value === 2) return '2.0';
+              if (value === 3) return 'Average';
+              if (value === 4) return '4.0';
+              if (value === 5) return 'Excellent';
+              return value;
+            }
+          },
+          grid: {
+            color: 'rgba(100, 116, 139, 0.12)',
+            lineWidth: 1,
+            drawBorder: false,
+            drawTicks: true
+          }
+        },
+        x: {
+          ticks: {
+            font: { size: 12, weight: 600 },
+            color: '#333',
+            padding: 8
+          },
+          grid: {
+            display: true,
+            color: 'rgba(100, 116, 139, 0.08)',
+            lineWidth: 0.5,
+            drawBorder: false,
+            drawTicks: false
+          }
+        }
+      }
+    }
+  });
+}
+
+function renderQuestionsRatingsChart(data) {
+  const q1 = data.reduce((a, b) => a + b.q1_regularity, 0) / data.length;
+  const q2 = data.reduce((a, b) => a + b.q2_syllabus, 0) / data.length;
+  const q3 = data.reduce((a, b) => a + b.q3_conceptual, 0) / data.length;
+  const q4 = data.reduce((a, b) => a + b.q4_practical, 0) / data.length;
+  const q5 = data.reduce((a, b) => a + b.q5_communication, 0) / data.length;
+  const q6 = data.reduce((a, b) => a + b.q6_teaching, 0) / data.length;
+  const q7 = data.reduce((a, b) => a + b.q7_contribution, 0) / data.length;
+  
+  const ctx = document.getElementById('questionsRatingsChart').getContext('2d');
+  
+  if (chartInstances.questionsRatings) {
+    chartInstances.questionsRatings.destroy();
+  }
+  
+  chartInstances.questionsRatings = new Chart(ctx, {
+    type: 'radar',
+    data: {
+      labels: ['Regularity', 'Syllabus', 'Conceptual', 'Practical', 'Communication', 'Teaching', 'Contribution'],
+      datasets: [{
+        label: 'Average Rating',
+        data: [q1.toFixed(2), q2.toFixed(2), q3.toFixed(2), q4.toFixed(2), q5.toFixed(2), q6.toFixed(2), q7.toFixed(2)],
+        borderColor: '#667eea',
+        backgroundColor: 'rgba(102, 126, 234, 0.15)',
+        borderWidth: 3,
+        pointBackgroundColor: '#667eea',
+        pointBorderColor: '#fff',
+        pointBorderWidth: 2,
+        pointRadius: 5,
+        pointHoverRadius: 7
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: {
+        legend: { display: true, position: 'top', labels: { padding: 15, font: { size: 12, weight: 600 } } },
+        tooltip: {
+          backgroundColor: 'rgba(0,0,0,0.8)',
+          padding: 12,
+          callbacks: {
+            label: function(context) {
+              return 'Rating: ' + context.parsed.r.toFixed(2) + '/5';
+            }
+          }
+        }
+      },
+      scales: {
+        r: {
+          beginAtZero: true,
+          min: 0,
+          max: 5,
+          grid: { color: 'rgba(0,0,0,0.08)' },
+          ticks: { font: { size: 11 } }
+        }
+      }
+    }
+  });
+}
+
+function renderDepartmentDistributionChart(data) {
+  const deptCounts = {};
+  
+  data.forEach(f => {
+    const dept = f.student_dept || 'Unknown';
+    deptCounts[dept] = (deptCounts[dept] || 0) + 1;
+  });
+  
+  const labels = Object.keys(deptCounts).sort();
+  const counts = labels.map(dept => deptCounts[dept]);
+  
+  const colors = [
+    '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8',
+    '#F7DC6F', '#BB8FCE', '#85C1E2', '#F8B88B', '#A9DFBF'
+  ];
+  
+  const ctx = document.getElementById('departmentDistributionChart').getContext('2d');
+  
+  if (chartInstances.departmentDistribution) {
+    chartInstances.departmentDistribution.destroy();
+  }
+  
+  chartInstances.departmentDistribution = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: labels,
+      datasets: [{
+        data: counts,
+        backgroundColor: colors.slice(0, labels.length),
+        borderColor: '#fff',
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: {
+        legend: { display: true, position: 'right' }
+      }
+    }
+  });
+}
+
+function renderTrendChart(data) {
+  const last30Days = {};
+  const now = new Date();
+  
+  for (let i = 0; i < 30; i++) {
+    const date = new Date(now);
+    date.setDate(date.getDate() - i);
+    const dateStr = date.toISOString().split('T')[0];
+    last30Days[dateStr] = 0;
+  }
+  
+  data.forEach(f => {
+    if (f.created_at) {
+      const dateStr = new Date(f.created_at).toISOString().split('T')[0];
+      if (last30Days.hasOwnProperty(dateStr)) {
+        last30Days[dateStr]++;
+      }
+    }
+  });
+  
+  const dates = Object.keys(last30Days).sort();
+  const counts = dates.map(date => last30Days[date]);
+  
+  const ctx = document.getElementById('trendChart').getContext('2d');
+  
+  if (chartInstances.trend) {
+    chartInstances.trend.destroy();
+  }
+  
+  chartInstances.trend = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: dates,
+      datasets: [{
+        label: 'Responses',
+        data: counts,
+        borderColor: '#FF6B6B',
+        backgroundColor: 'rgba(255, 107, 107, 0.1)',
+        borderWidth: 2,
+        fill: true,
+        tension: 0.4,
+        pointRadius: 4,
+        pointBackgroundColor: '#FF6B6B'
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: {
+        legend: { display: true }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: { stepSize: 1 }
+        }
+      }
+    }
+  });
+}
+
+function renderSemesterDistributionChart(data) {
+  const semesterCounts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0 };
+  
+  data.forEach(f => {
+    if (f.student_sem) {
+      semesterCounts[f.student_sem]++;
+    }
+  });
+  
+  const labels = Object.keys(semesterCounts).map(s => `Sem ${s}`);
+  const counts = Object.values(semesterCounts);
+  
+  const ctx = document.getElementById('semesterDistributionChart').getContext('2d');
+  
+  if (chartInstances.semesterDistribution) {
+    chartInstances.semesterDistribution.destroy();
+  }
+  
+  chartInstances.semesterDistribution = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Number of Responses',
+        data: counts,
+        backgroundColor: '#9C27B0',
+        borderColor: '#fff',
+        borderWidth: 2,
+        borderRadius: 5
+      }]
+    },
+    options: {
+      indexAxis: 'x',
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: 'rgba(0,0,0,0.8)',
+          padding: 12,
+          callbacks: {
+            label: function(context) {
+              return 'Responses: ' + context.parsed.y;
+            }
+          }
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: { stepSize: 1 },
+          grid: { color: 'rgba(0,0,0,0.05)' }
+        },
+        x: {
+          grid: { display: false }
+        }
+      }
+    }
+  });
+}
+
+function generateKeyInsights(data, overallAverage, topFaculty, bottomFaculty) {
+  let insights = [];
+  
+  // Calculate insight 1: Response rate quality
+  if (overallAverage >= 4) {
+    insights.push(`Excellent feedback average of ${overallAverage}/5 indicates strong overall satisfaction with faculty performance.`);
+  } else if (overallAverage >= 3) {
+    insights.push(`Good feedback average of ${overallAverage}/5. There is room for improvement in faculty development areas.`);
+  } else {
+    insights.push(`Feedback average of ${overallAverage}/5 suggests areas requiring immediate attention and faculty training.`);
+  }
+  
+  // Insight 2: Faculty performance disparity
+  if (topFaculty !== '-' && bottomFaculty !== '-') {
+    insights.push(`${topFaculty} is leading in faculty ratings while ${bottomFaculty} has lower scores - consider performance improvement plans.`);
+  }
+  
+  // Insight 3: Response volume
+  if (data.length >= 100) {
+    insights.push(`Strong participation rate with ${data.length} responses collected - excellent data for analysis.`);
+  } else if (data.length >= 50) {
+    insights.push(`Moderate feedback volume with ${data.length} responses. Consider increasing student participation.`);
+  } else {
+    insights.push(`Limited feedback volume (${data.length} responses). More engagement needed for meaningful insights.`);
+  }
+  
+  // Insight 4: Consistency
+  const allRatings = [];
+  data.forEach(f => {
+    allRatings.push(f.q1_regularity, f.q2_syllabus, f.q3_conceptual, 
+                   f.q4_practical, f.q5_communication, f.q6_teaching, 
+                   f.q7_contribution);
+  });
+  const avg = allRatings.reduce((a, b) => a + b, 0) / allRatings.length;
+  const variance = allRatings.reduce((sum, val) => sum + Math.pow(val - avg, 2), 0) / allRatings.length;
+  const stdDev = Math.sqrt(variance);
+  
+  if (stdDev < 1) {
+    insights.push(`Highly consistent ratings (low variance) suggest uniformly good faculty performance across all dimensions.`);
+  } else if (stdDev < 1.5) {
+    insights.push(`Moderate consistency in ratings indicates balanced performance with some variation across faculty members.`);
+  } else {
+    insights.push(`High variance in ratings suggests significant differences in faculty performance across the system.`);
+  }
+  
+  document.getElementById('vizKeyInsights').textContent = insights.join(' ');
+}
+
+function downloadVisualizationReport() {
+  if (vizFilteredFeedbackData.length === 0) {
+    alert('No data available to download. Please ensure filters are applied and data is loaded.');
+    return;
+  }
+  
+  const timestamp = new Date().toLocaleString();
+  const timePeriod = document.getElementById('vizTimePeriodFilter').value || 'all';
+  
+  // Create a simple HTML report
+  let html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <title>Feedback Analytics Report</title>
+      <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        h1 { color: #333; text-align: center; border-bottom: 3px solid #667eea; padding-bottom: 10px; }
+        h2 { color: #667eea; margin-top: 30px; border-bottom: 2px solid #ddd; padding-bottom: 8px; }
+        .meta { background: white; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #666; font-size: 14px; }
+        .stats-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 30px; }
+        .stat-box { background: white; padding: 20px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-left: 4px solid #667eea; }
+        .stat-number { font-size: 28px; font-weight: bold; color: #667eea; }
+        .stat-label { font-size: 14px; color: #666; }
+        table { width: 100%; border-collapse: collapse; background: white; margin-top: 15px; }
+        th { background: #667eea; color: white; padding: 12px; text-align: left; font-weight: 600; }
+        td { padding: 12px; border-bottom: 1px solid #ddd; }
+        tr:hover { background: #f9f9f9; }
+        .insight { background: #f0f7ff; border-left: 4px solid #0066cc; padding: 15px; margin: 15px 0; border-radius: 4px; }
+        .footer { text-align: center; margin-top: 30px; color: #999; font-size: 12px; border-top: 1px solid #ddd; padding-top: 20px; }
+      </style>
+    </head>
+    <body>
+      <h1>📊 Feedback Analytics Report</h1>
+      
+      <div class="meta">
+        <strong>Generated:</strong> ${timestamp}<br>
+        <strong>Time Period:</strong> ${getTimePeriodLabel(timePeriod)}<br>
+        <strong>Total Responses Analyzed:</strong> ${vizFilteredFeedbackData.length}
+      </div>
+      
+      <h2>Key Statistics</h2>
+      <div class="stats-container">
+        <div class="stat-box">
+          <div class="stat-number">${document.getElementById('vizTotalResponses').textContent}</div>
+          <div class="stat-label">Total Responses</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-number">${document.getElementById('vizOverallAverage').textContent}</div>
+          <div class="stat-label">Overall Average Rating</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-number">${document.getElementById('vizHighestRating').textContent}</div>
+          <div class="stat-label">Highest Rated</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-number">${document.getElementById('vizLowestRating').textContent}</div>
+          <div class="stat-label">Lowest Rated</div>
+        </div>
+      </div>
+      
+      <h2>Key Insights</h2>
+      <div class="insight">
+        ${document.getElementById('vizKeyInsights').textContent}
+      </div>
+      
+      <h2>Detailed Feedback Responses</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Student</th>
+            <th>Faculty</th>
+            <th>Course</th>
+            <th>Avg Rating</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+  `;
+  
+  vizFilteredFeedbackData.forEach(f => {
+    const avgRating = ((f.q1_regularity + f.q2_syllabus + f.q3_conceptual + 
+                       f.q4_practical + f.q5_communication + f.q6_teaching + 
+                       f.q7_contribution) / 7).toFixed(2);
+    html += `
+      <tr>
+        <td>${f.id}</td>
+        <td>${escapeHtml(f.student_name)}</td>
+        <td>${escapeHtml(f.faculty_name)}</td>
+        <td>${escapeHtml(f.course_name)}</td>
+        <td><strong>${avgRating}/5</strong></td>
+        <td>✅ Complete</td>
+      </tr>
+    `;
+  });
+  
+  html += `
+        </tbody>
+      </table>
+      
+      <div class="footer">
+        <p>This report was generated by the Faculty Feedback Management System</p>
+        <p>© ${new Date().getFullYear()} - All rights reserved</p>
+      </div>
+    </body>
+    </html>
+  `;
+  
+  // Create blob and download
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `feedback_report_${new Date().toISOString().split('T')[0]}.html`;
+  a.click();
+  window.URL.revokeObjectURL(url);
+  
+  showMessage('feedback', '✅ Report downloaded successfully!', 'success');
+}
+</script>
+
+<!-- Chart.js Library -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</body>
+</html>

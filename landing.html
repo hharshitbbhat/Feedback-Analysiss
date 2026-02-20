@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Feedback System - Welcome</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-theme {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1001;
+            background: rgba(255, 255, 255, 0.95);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50px;
+            padding: 10px 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        body.dark-theme .theme-toggle {
+            background: rgba(45, 45, 45, 0.95);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .theme-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .theme-toggle-icon {
+            font-size: 20px;
+        }
+
+        .theme-toggle-text {
+            font-weight: 600;
+            font-size: 14px;
+            color: #333;
+        }
+
+        body.dark-theme .theme-toggle-text {
+            color: #e0e0e0;
+        }
+
+        .landing-container {
+            width: 100%;
+            max-width: 900px;
+            background: rgba(255, 255, 255, 0.98);
+            padding: 60px 50px;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            animation: fadeIn 0.6s ease-out;
+            backdrop-filter: blur(10px);
+        }
+
+        body.dark-theme .landing-container {
+            background: rgba(45, 45, 45, 0.98);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo-section {
+            margin-bottom: 40px;
+        }
+
+        .logo-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            display: block;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .logo-section h1 {
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            color: #000;
+            letter-spacing: -1px;
+        }
+
+        body.dark-theme .logo-section h1 {
+            color: #ffffff;
+        }
+
+        .logo-section p {
+            font-size: 18px;
+            color: #666;
+            font-weight: 500;
+        }
+
+        body.dark-theme .logo-section p {
+            color: #b0b0b0;
+        }
+
+        .tagline {
+            font-size: 16px;
+            color: #888;
+            margin-bottom: 50px;
+            line-height: 1.6;
+        }
+
+        body.dark-theme .tagline {
+            color: #a0a0a0;
+        }
+
+        .action-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .action-card {
+            background: #fafafa;
+            padding: 35px 25px;
+            border-radius: 12px;
+            text-decoration: none;
+            color: #000;
+            border: 3px solid transparent;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body.dark-theme .action-card {
+            background: #2d2d2d;
+            color: #ffffff;
+        }
+
+        .action-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: left 0.4s ease;
+            z-index: 0;
+        }
+
+        body.dark-theme .action-card::before {
+            background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+        }
+
+        .action-card:hover::before {
+            left: 0;
+        }
+
+        .action-card:hover {
+            border-color: #667eea;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        body.dark-theme .action-card:hover {
+            border-color: #4a5568;
+        }
+
+        .action-card * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .action-card:hover * {
+            color: white !important;
+        }
+
+        .card-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #000;
+        }
+
+        body.dark-theme .card-title {
+            color: #ffffff;
+        }
+
+        .card-desc {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        body.dark-theme .card-desc {
+            color: #b0b0b0;
+        }
+
+        .features {
+            margin-top: 50px;
+            padding-top: 40px;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        body.dark-theme .features {
+            border-top-color: #404040;
+        }
+
+        .features h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: #000;
+        }
+
+        body.dark-theme .features h2 {
+            color: #ffffff;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 25px;
+        }
+
+        .feature-item {
+            text-align: center;
+        }
+
+        .feature-icon {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .feature-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        body.dark-theme .feature-title {
+            color: #e0e0e0;
+        }
+
+        .feature-desc {
+            font-size: 13px;
+            color: #777;
+        }
+
+        body.dark-theme .feature-desc {
+            color: #a0a0a0;
+        }
+
+        .footer {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #e0e0e0;
+            color: #888;
+            font-size: 13px;
+        }
+
+        body.dark-theme .footer {
+            border-top-color: #404040;
+            color: #a0a0a0;
+        }
+
+        @media (max-width: 768px) {
+            .landing-container {
+                padding: 40px 30px;
+            }
+
+            .logo-section h1 {
+                font-size: 32px;
+            }
+
+            .logo-icon {
+                font-size: 60px;
+            }
+
+            .action-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .theme-toggle {
+                top: 10px;
+                right: 10px;
+                padding: 8px 16px;
+            }
+
+            .theme-toggle-text {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="theme-toggle" id="themeToggle">
+        <span class="theme-toggle-icon" id="themeIcon">🌙</span>
+        <span class="theme-toggle-text" id="themeText">Dark Mode</span>
+    </div>
+
+    <div class="landing-container">
+        <div class="logo-section">
+            <span class="logo-icon">🎓</span>
+            <h1>Faculty Feedback System</h1>
+            <p>Your Voice Matters</p>
+        </div>
+
+        <p class="tagline">
+            A comprehensive platform for students to provide meaningful feedback<br>
+            and help improve the quality of education
+        </p>
+
+        <div class="action-cards">
+            <a href="/student-login" class="action-card">
+                <span class="card-icon">👨‍🎓</span>
+                <div class="card-title">Student Login</div>
+                <div class="card-desc">Submit feedback for your courses and faculty members</div>
+            </a>
+
+            <a href="/register" class="action-card">
+                <span class="card-icon">📝</span>
+                <div class="card-title">New Registration</div>
+                <div class="card-desc">Create a new student account to get started</div>
+            </a>
+
+            <a href="/admin-login" class="action-card">
+                <span class="card-icon">👨‍💼</span>
+                <div class="card-title">Admin Portal</div>
+                <div class="card-desc">Manage system, view feedback, and generate reports</div>
+            </a>
+        </div>
+
+        <div class="features">
+            <h2>✨ Key Features</h2>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <div class="feature-icon">🔒</div>
+                    <div class="feature-title">Secure & Anonymous</div>
+                    <div class="feature-desc">Your feedback is confidential</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">⚡</div>
+                    <div class="feature-title">Quick & Easy</div>
+                    <div class="feature-desc">Submit feedback in minutes</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">📊</div>
+                    <div class="feature-title">Detailed Analytics</div>
+                    <div class="feature-desc">Comprehensive reporting tools</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">🎯</div>
+                    <div class="feature-title">Actionable Insights</div>
+                    <div class="feature-desc">Drive meaningful improvements</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>© 2024 Faculty Feedback System. All rights reserved.</p>
+            <p style="margin-top: 8px;">Building better education through honest feedback</p>
+        </div>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const themeText = document.getElementById('themeText');
+
+        function setTheme(isDark) {
+            if (isDark) {
+                document.body.classList.add('dark-theme');
+                themeIcon.textContent = '☀️';
+                themeText.textContent = 'Light Mode';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.remove('dark-theme');
+                themeIcon.textContent = '🌙';
+                themeText.textContent = 'Dark Mode';
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        themeToggle.addEventListener('click', function() {
+            const isDark = !document.body.classList.contains('dark-theme');
+            setTheme(isDark);
+        });
+
+        // Load saved theme
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            setTheme(true);
+        }
+    </script>
+</body>
+</html>
