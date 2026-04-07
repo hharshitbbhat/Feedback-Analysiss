@@ -1,0 +1,1364 @@
+<!-- ============================================================
+  REPLACE the entire visualization section in admin.html
+  Find: <div id="visualization" class="section">
+  Replace with everything below up to the closing </div>
+  Also add the new CSS inside your existing <style> tag
+  And replace the visualization JS at the bottom
+============================================================ -->
+
+<!-- ── NEW CSS — add inside your existing <style> tag ─────── -->
+<style id="viz-new-styles">
+/* ── VIZ FILTER WIZARD ── */
+.viz-wizard {
+  background: var(--surface, white);
+  border: 2px solid #000;
+  border-radius: 2px;
+  margin-bottom: 32px;
+  overflow: hidden;
+}
+
+body.dark-theme .viz-wizard {
+  border-color: #404040;
+  background: #2d2d2d;
+}
+
+.viz-wizard-header {
+  background: #000;
+  color: white;
+  padding: 18px 28px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+body.dark-theme .viz-wizard-header {
+  background: #0a0a0a;
+}
+
+.viz-wizard-header h3 {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: white;
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+.viz-wizard-body {
+  padding: 28px;
+}
+
+.viz-filter-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.viz-filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.viz-filter-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #666;
+}
+
+body.dark-theme .viz-filter-label { color: #999; }
+
+.viz-filter-select {
+  padding: 10px 14px;
+  border: 2px solid #ddd;
+  border-radius: 2px;
+  font-size: 13px;
+  font-family: inherit;
+  background: white;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  width: 100%;
+  color: #000;
+}
+
+body.dark-theme .viz-filter-select {
+  background: #3a3a3a;
+  border-color: #505050;
+  color: #e0e0e0;
+}
+
+.viz-filter-select:focus {
+  outline: none;
+  border-color: #000;
+}
+
+body.dark-theme .viz-filter-select:focus {
+  border-color: #fff;
+}
+
+.viz-apply-btn {
+  background: #000;
+  color: white;
+  border: none;
+  padding: 12px 32px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.2s;
+  font-family: inherit;
+  min-width: 160px;
+}
+
+body.dark-theme .viz-apply-btn {
+  background: #fff;
+  color: #000;
+}
+
+.viz-apply-btn:hover {
+  background: #333;
+  transform: translateY(-1px);
+}
+
+body.dark-theme .viz-apply-btn:hover {
+  background: #e0e0e0;
+}
+
+.viz-reset-btn {
+  background: transparent;
+  color: #666;
+  border: 2px solid #ddd;
+  padding: 12px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.2s;
+  font-family: inherit;
+  min-width: 100px;
+}
+
+body.dark-theme .viz-reset-btn {
+  color: #999;
+  border-color: #505050;
+}
+
+.viz-reset-btn:hover {
+  border-color: #000;
+  color: #000;
+}
+
+body.dark-theme .viz-reset-btn:hover {
+  border-color: #fff;
+  color: #fff;
+}
+
+.viz-btn-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* ── ACTIVE FILTERS TAGS ── */
+.viz-active-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0 28px 20px;
+}
+
+.viz-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: #000;
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 2px;
+  letter-spacing: 0.04em;
+}
+
+body.dark-theme .viz-tag {
+  background: #fff;
+  color: #000;
+}
+
+/* ── SUMMARY STATS ── */
+.viz-stats-bar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 2px;
+  margin-bottom: 32px;
+  background: #000;
+  border: 2px solid #000;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+body.dark-theme .viz-stats-bar {
+  background: #404040;
+  border-color: #404040;
+}
+
+.viz-stat {
+  background: white;
+  padding: 20px 18px;
+  text-align: center;
+  transition: background 0.2s;
+}
+
+body.dark-theme .viz-stat {
+  background: #2d2d2d;
+}
+
+.viz-stat:hover { background: #f9f9f9; }
+body.dark-theme .viz-stat:hover { background: #383838; }
+
+.viz-stat-val {
+  font-family: 'Courier New', monospace;
+  font-size: 28px;
+  font-weight: 700;
+  color: #000;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+body.dark-theme .viz-stat-val { color: #fff; }
+
+.viz-stat-val.good { color: #1a7a1a; }
+.viz-stat-val.warn { color: #c87000; }
+.viz-stat-val.bad  { color: #c82020; }
+
+.viz-stat-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #999;
+}
+
+body.dark-theme .viz-stat-label { color: #666; }
+
+.viz-stat-sub {
+  font-size: 11px;
+  color: #bbb;
+  margin-top: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── CHART GRID ── */
+.viz-chart-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.viz-chart-full {
+  grid-column: 1 / -1;
+}
+
+.viz-chart-card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 2px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+
+body.dark-theme .viz-chart-card {
+  background: #2d2d2d;
+  border-color: #404040;
+}
+
+.viz-chart-card-header {
+  padding: 16px 20px 12px;
+  border-bottom: 1px solid #e8e8e8;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+body.dark-theme .viz-chart-card-header {
+  border-bottom-color: #404040;
+}
+
+.viz-chart-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #000;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+body.dark-theme .viz-chart-title { color: #e0e0e0; }
+
+.viz-chart-subtitle {
+  font-size: 11px;
+  color: #999;
+  margin-top: 2px;
+}
+
+.viz-chart-body {
+  padding: 20px;
+  position: relative;
+}
+
+.viz-chart-body canvas {
+  max-height: 300px;
+}
+
+.viz-chart-full .viz-chart-body canvas {
+  max-height: 380px;
+}
+
+/* ── FACULTY LEADERBOARD ── */
+.faculty-leaderboard {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 20px;
+}
+
+.faculty-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: #f9f9f9;
+  border-radius: 2px;
+  border-left: 3px solid #ddd;
+  transition: all 0.15s;
+}
+
+body.dark-theme .faculty-row {
+  background: #383838;
+  border-left-color: #505050;
+}
+
+.faculty-row:hover {
+  background: #f0f0f0;
+  border-left-color: #000;
+}
+
+body.dark-theme .faculty-row:hover {
+  background: #424242;
+  border-left-color: #fff;
+}
+
+.faculty-rank {
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  color: #999;
+  width: 24px;
+  flex-shrink: 0;
+}
+
+.faculty-rank.top { color: #c87000; }
+
+.faculty-name-cell {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+}
+
+body.dark-theme .faculty-name-cell { color: #e0e0e0; }
+
+.faculty-bar-wrap {
+  width: 120px;
+  height: 6px;
+  background: #e0e0e0;
+  border-radius: 3px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+body.dark-theme .faculty-bar-wrap { background: #505050; }
+
+.faculty-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: #000;
+  transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
+}
+
+body.dark-theme .faculty-bar-fill { background: #fff; }
+
+.faculty-score {
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  font-weight: 700;
+  color: #000;
+  width: 36px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+body.dark-theme .faculty-score { color: #fff; }
+
+.faculty-count {
+  font-size: 11px;
+  color: #999;
+  width: 48px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* ── NO DATA STATE ── */
+.viz-empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: #999;
+}
+
+.viz-empty-icon { font-size: 48px; margin-bottom: 12px; opacity: 0.3; }
+.viz-empty-text { font-size: 15px; font-weight: 600; }
+.viz-empty-sub  { font-size: 13px; margin-top: 6px; }
+
+/* ── INSIGHTS BOX ── */
+.viz-insights {
+  background: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-left: 4px solid #000;
+  border-radius: 2px;
+  padding: 18px 22px;
+  margin-bottom: 24px;
+}
+
+body.dark-theme .viz-insights {
+  background: #262626;
+  border-color: #404040;
+  border-left-color: #fff;
+}
+
+.viz-insights-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+body.dark-theme .viz-insights-title { color: #999; }
+
+.viz-insights-text {
+  font-size: 13px;
+  color: #333;
+  line-height: 1.7;
+}
+
+body.dark-theme .viz-insights-text { color: #c0c0c0; }
+
+/* ── DOWNLOAD BTN ── */
+.viz-download-btn {
+  background: transparent;
+  color: #000;
+  border: 2px solid #000;
+  padding: 10px 20px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 2px;
+  font-family: inherit;
+  transition: all 0.2s;
+  min-width: auto;
+}
+
+body.dark-theme .viz-download-btn {
+  color: #fff;
+  border-color: #fff;
+}
+
+.viz-download-btn:hover {
+  background: #000;
+  color: #fff;
+}
+
+body.dark-theme .viz-download-btn:hover {
+  background: #fff;
+  color: #000;
+}
+
+@media (max-width: 900px) {
+  .viz-chart-grid { grid-template-columns: 1fr; }
+  .viz-filter-row { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 600px) {
+  .viz-filter-row { grid-template-columns: 1fr; }
+  .viz-stats-bar  { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+
+<!-- ── VISUALIZATION SECTION HTML ─────────────────────────── -->
+<div id="visualization" class="section">
+
+  <div style="margin-bottom: 28px; display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:16px;">
+    <div>
+      <h2 style="margin-bottom:6px;">Feedback Analytics</h2>
+      <p style="color:#666; font-size:14px; margin:0;">Select filters below to analyse feedback by department, semester, faculty or time period.</p>
+    </div>
+    <button class="viz-download-btn" id="vizDownloadBtn">⬇ Export Report</button>
+  </div>
+
+  <!-- FILTER WIZARD -->
+  <div class="viz-wizard">
+    <div class="viz-wizard-header">
+      <span style="font-size:18px;">🔍</span>
+      <h3>Filter & Analyse</h3>
+    </div>
+    <div class="viz-wizard-body">
+      <div class="viz-filter-row">
+        <div class="viz-filter-group">
+          <label class="viz-filter-label">📅 Academic Year</label>
+          <select class="viz-filter-select" id="vf_year">
+            <option value="">All Years</option>
+            <option value="2025" selected>2024–25</option>
+            <option value="2024">2023–24</option>
+            <option value="2023">2022–23</option>
+          </select>
+        </div>
+        <div class="viz-filter-group">
+          <label class="viz-filter-label">🏢 Department</label>
+          <select class="viz-filter-select" id="vf_dept">
+            <option value="">All Departments</option>
+          </select>
+        </div>
+        <div class="viz-filter-group">
+          <label class="viz-filter-label">📚 Semester</label>
+          <select class="viz-filter-select" id="vf_sem">
+            <option value="">All Semesters</option>
+            <option value="1">Semester 1</option>
+            <option value="2">Semester 2</option>
+            <option value="3">Semester 3</option>
+            <option value="4">Semester 4</option>
+            <option value="5">Semester 5</option>
+            <option value="6">Semester 6</option>
+            <option value="7">Semester 7</option>
+            <option value="8">Semester 8</option>
+          </select>
+        </div>
+        <div class="viz-filter-group">
+          <label class="viz-filter-label">👨‍🏫 Faculty</label>
+          <select class="viz-filter-select" id="vf_faculty">
+            <option value="">All Faculty</option>
+          </select>
+        </div>
+        <div class="viz-filter-group">
+          <label class="viz-filter-label">⏱ Time Period</label>
+          <select class="viz-filter-select" id="vf_period">
+            <option value="all">All Time</option>
+            <option value="1month">Last Month</option>
+            <option value="3months">Last 3 Months</option>
+            <option value="6months">Last 6 Months</option>
+            <option value="1year" selected>Last Year</option>
+          </select>
+        </div>
+        <div class="viz-filter-group">
+          <label class="viz-filter-label">⭐ Min Rating</label>
+          <select class="viz-filter-select" id="vf_minrating">
+            <option value="0">Any Rating</option>
+            <option value="3">3.0 and above</option>
+            <option value="4">4.0 and above</option>
+            <option value="4.5">4.5 and above</option>
+          </select>
+        </div>
+      </div>
+      <div class="viz-btn-row">
+        <button class="viz-apply-btn" id="vizApplyBtn">▶ Analyse Now</button>
+        <button class="viz-reset-btn" id="vizResetBtn">✕ Reset</button>
+        <span style="font-size:12px; color:#999;" id="vizResultCount"></span>
+      </div>
+    </div>
+    <!-- Active filter tags -->
+    <div class="viz-active-filters" id="vizActiveTags" style="display:none;"></div>
+  </div>
+
+  <!-- EMPTY STATE (shown before first analysis) -->
+  <div class="viz-empty" id="vizEmptyState">
+    <div class="viz-empty-icon">📊</div>
+    <div class="viz-empty-text">Select filters and click Analyse Now</div>
+    <div class="viz-empty-sub">Charts will appear here after applying filters</div>
+  </div>
+
+  <!-- RESULTS (hidden until analysis) -->
+  <div id="vizResults" style="display:none;">
+
+    <!-- STATS BAR -->
+    <div class="viz-stats-bar">
+      <div class="viz-stat">
+        <div class="viz-stat-val" id="vs_total">0</div>
+        <div class="viz-stat-label">Responses</div>
+        <div class="viz-stat-sub" id="vs_period">—</div>
+      </div>
+      <div class="viz-stat">
+        <div class="viz-stat-val" id="vs_avg">0.0</div>
+        <div class="viz-stat-label">Avg Rating</div>
+        <div class="viz-stat-sub">out of 5.0</div>
+      </div>
+      <div class="viz-stat">
+        <div class="viz-stat-val" id="vs_top_score">—</div>
+        <div class="viz-stat-label">Highest Rated</div>
+        <div class="viz-stat-sub" id="vs_top_name">—</div>
+      </div>
+      <div class="viz-stat">
+        <div class="viz-stat-val" id="vs_low_score">—</div>
+        <div class="viz-stat-label">Needs Attention</div>
+        <div class="viz-stat-sub" id="vs_low_name">—</div>
+      </div>
+      <div class="viz-stat">
+        <div class="viz-stat-val" id="vs_faculty_count">0</div>
+        <div class="viz-stat-label">Faculty Rated</div>
+        <div class="viz-stat-sub">in selection</div>
+      </div>
+      <div class="viz-stat">
+        <div class="viz-stat-val" id="vs_excellent_pct">0%</div>
+        <div class="viz-stat-label">Excellent (5★)</div>
+        <div class="viz-stat-sub">of all ratings</div>
+      </div>
+    </div>
+
+    <!-- KEY INSIGHTS -->
+    <div class="viz-insights">
+      <div class="viz-insights-title">💡 Key Insights</div>
+      <div class="viz-insights-text" id="vizInsightsText">—</div>
+    </div>
+
+    <!-- CHARTS GRID -->
+    <div class="viz-chart-grid">
+
+      <!-- Rating Distribution -->
+      <div class="viz-chart-card">
+        <div class="viz-chart-card-header">
+          <div>
+            <div class="viz-chart-title">Rating Distribution</div>
+            <div class="viz-chart-subtitle">Count of each rating value (1–5)</div>
+          </div>
+        </div>
+        <div class="viz-chart-body">
+          <canvas id="vc_ratingDist"></canvas>
+        </div>
+      </div>
+
+      <!-- Question-wise Radar -->
+      <div class="viz-chart-card">
+        <div class="viz-chart-card-header">
+          <div>
+            <div class="viz-chart-title">Question-wise Averages</div>
+            <div class="viz-chart-subtitle">Across 7 assessment dimensions</div>
+          </div>
+        </div>
+        <div class="viz-chart-body">
+          <canvas id="vc_radar"></canvas>
+        </div>
+      </div>
+
+      <!-- Faculty Comparison (full width) -->
+      <div class="viz-chart-card viz-chart-full">
+        <div class="viz-chart-card-header">
+          <div>
+            <div class="viz-chart-title">Faculty Performance — All Dimensions</div>
+            <div class="viz-chart-subtitle">Average score per question per faculty member</div>
+          </div>
+        </div>
+        <div class="viz-chart-body">
+          <canvas id="vc_facultyLine"></canvas>
+        </div>
+      </div>
+
+      <!-- Faculty Leaderboard -->
+      <div class="viz-chart-card">
+        <div class="viz-chart-card-header">
+          <div>
+            <div class="viz-chart-title">Faculty Leaderboard</div>
+            <div class="viz-chart-subtitle">Ranked by overall average rating</div>
+          </div>
+        </div>
+        <div class="faculty-leaderboard" id="vc_leaderboard"></div>
+      </div>
+
+      <!-- Semester-wise bar -->
+      <div class="viz-chart-card">
+        <div class="viz-chart-card-header">
+          <div>
+            <div class="viz-chart-title">Semester-wise Avg Rating</div>
+            <div class="viz-chart-subtitle">Average feedback score by semester</div>
+          </div>
+        </div>
+        <div class="viz-chart-body">
+          <canvas id="vc_semBar"></canvas>
+        </div>
+      </div>
+
+      <!-- Response trend (full width) -->
+      <div class="viz-chart-card viz-chart-full">
+        <div class="viz-chart-card-header">
+          <div>
+            <div class="viz-chart-title">Submission Trend</div>
+            <div class="viz-chart-subtitle">Daily feedback submissions over time</div>
+          </div>
+        </div>
+        <div class="viz-chart-body">
+          <canvas id="vc_trend"></canvas>
+        </div>
+      </div>
+
+      <!-- Department pie -->
+      <div class="viz-chart-card">
+        <div class="viz-chart-card-header">
+          <div>
+            <div class="viz-chart-title">Department Breakdown</div>
+            <div class="viz-chart-subtitle">Responses by student department</div>
+          </div>
+        </div>
+        <div class="viz-chart-body">
+          <canvas id="vc_deptPie"></canvas>
+        </div>
+      </div>
+
+      <!-- Rating heatmap by faculty + question -->
+      <div class="viz-chart-card">
+        <div class="viz-chart-card-header">
+          <div>
+            <div class="viz-chart-title">Faculty × Question Heatmap</div>
+            <div class="viz-chart-subtitle">Score per faculty per dimension</div>
+          </div>
+        </div>
+        <div class="viz-chart-body" id="vc_heatmapWrap">
+          <!-- rendered as HTML table for clarity -->
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+  VISUALIZATION JAVASCRIPT
+============================================================ -->
+<script id="viz-new-js">
+// ── VIZ STATE ──────────────────────────────────────────────
+let _vizAllData   = [];
+let _vizFiltered  = [];
+let _vizCharts    = {};
+
+const Q_LABELS = ['Regularity','Syllabus','Conceptual','Practical','Communication','Teaching','Contribution'];
+const PALETTE  = ['#1a1a1a','#c8401a','#2a6049','#1a4070','#7a3a00','#5a1a5a','#1a5a5a','#6a4a00','#3a1a60','#1a601a'];
+
+// ── LOAD VIZ DATA ──────────────────────────────────────────
+function loadVisualizationData() {
+  fetch('/admin/feedback')
+    .then(r => r.json())
+    .then(data => {
+      _vizAllData = data;
+      _populateVizFilters(data);
+      // Show empty state initially
+      document.getElementById('vizEmptyState').style.display = 'block';
+      document.getElementById('vizResults').style.display    = 'none';
+    })
+    .catch(err => console.error('Failed to load viz data', err));
+}
+
+function _populateVizFilters(data) {
+  // Faculty
+  const fSel = document.getElementById('vf_faculty');
+  const names = [...new Set(data.map(d => d.faculty_name))].sort();
+  fSel.innerHTML = '<option value="">All Faculty</option>';
+  names.forEach(n => {
+    const o = document.createElement('option');
+    o.value = n; o.textContent = n;
+    fSel.appendChild(o);
+  });
+
+  // Department (from student_dept if available, else derive)
+  const dSel = document.getElementById('vf_dept');
+  const depts = [...new Set(data.map(d => d.student_dept || '').filter(Boolean))].sort();
+  dSel.innerHTML = '<option value="">All Departments</option>';
+  depts.forEach(d => {
+    const o = document.createElement('option');
+    o.value = d; o.textContent = d;
+    dSel.appendChild(o);
+  });
+}
+
+// ── APPLY FILTERS ──────────────────────────────────────────
+function _applyVizFilters() {
+  const year      = document.getElementById('vf_year').value;
+  const dept      = document.getElementById('vf_dept').value;
+  const sem       = document.getElementById('vf_sem').value;
+  const faculty   = document.getElementById('vf_faculty').value;
+  const period    = document.getElementById('vf_period').value;
+  const minRating = parseFloat(document.getElementById('vf_minrating').value) || 0;
+
+  let data = [..._vizAllData];
+
+  // Time period filter
+  if (period !== 'all') {
+    const now = new Date();
+    const cut = new Date();
+    if (period === '1month')  cut.setMonth(now.getMonth() - 1);
+    if (period === '3months') cut.setMonth(now.getMonth() - 3);
+    if (period === '6months') cut.setMonth(now.getMonth() - 6);
+    if (period === '1year')   cut.setFullYear(now.getFullYear() - 1);
+    data = data.filter(d => d.created_at && new Date(d.created_at) >= cut);
+  }
+
+  // Year filter (from created_at)
+  if (year) {
+    data = data.filter(d => d.created_at && new Date(d.created_at).getFullYear() === parseInt(year));
+  }
+
+  // Department
+  if (dept) data = data.filter(d => (d.student_dept || '') === dept);
+
+  // Semester
+  if (sem) data = data.filter(d => String(d.student_sem || '') === sem);
+
+  // Faculty
+  if (faculty) data = data.filter(d => d.faculty_name === faculty);
+
+  // Min rating
+  if (minRating > 0) {
+    data = data.filter(d => {
+      const avg = (d.q1_regularity + d.q2_syllabus + d.q3_conceptual +
+                   d.q4_practical + d.q5_communication + d.q6_teaching +
+                   d.q7_contribution) / 7;
+      return avg >= minRating;
+    });
+  }
+
+  _vizFiltered = data;
+
+  // Show active tags
+  _renderActiveTags({ year, dept, sem, faculty, period, minRating });
+
+  // Update count
+  document.getElementById('vizResultCount').textContent = `${data.length} record${data.length !== 1 ? 's' : ''} found`;
+
+  if (data.length === 0) {
+    document.getElementById('vizEmptyState').style.display = 'block';
+    document.getElementById('vizResults').style.display    = 'none';
+    document.getElementById('vizEmptyState').innerHTML = `
+      <div class="viz-empty">
+        <div class="viz-empty-icon">🔍</div>
+        <div class="viz-empty-text">No feedback matches these filters</div>
+        <div class="viz-empty-sub">Try broadening your selection</div>
+      </div>`;
+    return;
+  }
+
+  document.getElementById('vizEmptyState').style.display = 'none';
+  document.getElementById('vizResults').style.display    = 'block';
+
+  _renderVizStats(data);
+  _renderInsights(data);
+  _renderRatingDist(data);
+  _renderRadar(data);
+  _renderFacultyLine(data);
+  _renderLeaderboard(data);
+  _renderSemBar(data);
+  _renderTrend(data);
+  _renderDeptPie(data);
+  _renderHeatmap(data);
+}
+
+// ── ACTIVE TAGS ────────────────────────────────────────────
+function _renderActiveTags(f) {
+  const wrap = document.getElementById('vizActiveTags');
+  const tags = [];
+  if (f.year)       tags.push(`Year: ${f.year}`);
+  if (f.dept)       tags.push(`Dept: ${f.dept}`);
+  if (f.sem)        tags.push(`Sem: ${f.sem}`);
+  if (f.faculty)    tags.push(`Faculty: ${f.faculty}`);
+  if (f.period !== 'all') tags.push(`Period: ${f.period}`);
+  if (f.minRating > 0)    tags.push(`Min Rating: ${f.minRating}+`);
+
+  if (tags.length === 0) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'flex';
+  wrap.innerHTML = tags.map(t => `<span class="viz-tag">${t}</span>`).join('');
+}
+
+// ── STATS BAR ──────────────────────────────────────────────
+function _getAvg(d) {
+  return (d.q1_regularity + d.q2_syllabus + d.q3_conceptual +
+          d.q4_practical + d.q5_communication + d.q6_teaching +
+          d.q7_contribution) / 7;
+}
+
+function _renderVizStats(data) {
+  const total   = data.length;
+  const allAvgs = data.map(_getAvg);
+  const overall = (allAvgs.reduce((a,b)=>a+b,0)/total).toFixed(2);
+
+  // Faculty averages
+  const fMap = {};
+  data.forEach(d => {
+    if (!fMap[d.faculty_name]) fMap[d.faculty_name] = [];
+    fMap[d.faculty_name].push(_getAvg(d));
+  });
+  const fAvgs = Object.entries(fMap).map(([n,v]) => ({ n, v: v.reduce((a,b)=>a+b,0)/v.length }));
+  fAvgs.sort((a,b) => b.v - a.v);
+
+  const top = fAvgs[0] || { n:'—', v:0 };
+  const low = fAvgs[fAvgs.length-1] || { n:'—', v:0 };
+
+  // All individual ratings
+  const allRatings = data.flatMap(d => [d.q1_regularity,d.q2_syllabus,d.q3_conceptual,
+    d.q4_practical,d.q5_communication,d.q6_teaching,d.q7_contribution]);
+  const excellentPct = Math.round(allRatings.filter(r=>r===5).length / allRatings.length * 100);
+
+  document.getElementById('vs_total').textContent        = total;
+  document.getElementById('vs_avg').textContent          = overall;
+  document.getElementById('vs_avg').className            = 'viz-stat-val ' + (overall >= 4 ? 'good' : (overall >= 3 ? '' : 'bad'));
+  document.getElementById('vs_top_score').textContent    = top.v.toFixed(2);
+  document.getElementById('vs_top_score').className      = 'viz-stat-val good';
+  document.getElementById('vs_top_name').textContent     = top.n;
+  document.getElementById('vs_low_score').textContent    = low.v.toFixed(2);
+  document.getElementById('vs_low_score').className      = `viz-stat-val ${low.v<3?'bad':'warn'}`;
+  document.getElementById('vs_low_name').textContent     = low.n;
+  document.getElementById('vs_faculty_count').textContent= fAvgs.length;
+  document.getElementById('vs_excellent_pct').textContent= excellentPct + '%';
+  document.getElementById('vs_period').textContent       =
+    document.getElementById('vf_period').options[document.getElementById('vf_period').selectedIndex].text;
+}
+
+// ── INSIGHTS ───────────────────────────────────────────────
+function _renderInsights(data) {
+  const total   = data.length;
+  const allAvgs = data.map(_getAvg);
+  const overall = (allAvgs.reduce((a,b)=>a+b,0)/total).toFixed(2);
+
+  const fMap = {};
+  data.forEach(d => {
+    if (!fMap[d.faculty_name]) fMap[d.faculty_name] = [];
+    fMap[d.faculty_name].push(_getAvg(d));
+  });
+  const fAvgs = Object.entries(fMap).map(([n,v]) => ({n, v: v.reduce((a,b)=>a+b,0)/v.length}));
+  fAvgs.sort((a,b) => b.v - a.v);
+
+  const qAvgs = Q_LABELS.map((l,i) => {
+    const key = ['q1_regularity','q2_syllabus','q3_conceptual','q4_practical','q5_communication','q6_teaching','q7_contribution'][i];
+    return { l, v: data.reduce((s,d)=>s+d[key],0)/data.length };
+  });
+  qAvgs.sort((a,b)=>b.v-a.v);
+
+  const insights = [];
+  if (overall >= 4.5) insights.push(`🏆 Outstanding overall average of ${overall}/5 — faculty performance is excellent.`);
+  else if (overall >= 4) insights.push(`✅ Strong overall average of ${overall}/5 reflecting good teaching quality.`);
+  else if (overall >= 3) insights.push(`📈 Average rating of ${overall}/5 — there is room for improvement.`);
+  else insights.push(`⚠️ Low average of ${overall}/5 — immediate faculty development attention needed.`);
+
+  if (fAvgs.length > 1) {
+    insights.push(`🥇 ${fAvgs[0].n} leads with ${fAvgs[0].v.toFixed(2)}/5 across ${data.filter(d=>d.faculty_name===fAvgs[0].n).length} responses.`);
+    if (fAvgs[fAvgs.length-1].v < 3.5) {
+      insights.push(`⚠️ ${fAvgs[fAvgs.length-1].n} scored ${fAvgs[fAvgs.length-1].v.toFixed(2)}/5 — consider targeted support.`);
+    }
+  }
+
+  insights.push(`💪 Strongest dimension: ${qAvgs[0].l} (avg ${qAvgs[0].v.toFixed(2)}). Weakest: ${qAvgs[qAvgs.length-1].l} (avg ${qAvgs[qAvgs.length-1].v.toFixed(2)}).`);
+
+  if (total < 30) insights.push(`📊 Sample size is small (${total} responses) — results may not be statistically significant.`);
+  else insights.push(`📊 Solid sample of ${total} responses provides reliable statistical insight.`);
+
+  document.getElementById('vizInsightsText').innerHTML = insights.join('<br>');
+}
+
+// ── CHART HELPERS ──────────────────────────────────────────
+function _destroyChart(id) {
+  if (_vizCharts[id]) { _vizCharts[id].destroy(); delete _vizCharts[id]; }
+}
+
+function _isDark() { return document.body.classList.contains('dark-theme'); }
+function _gridColor() { return _isDark() ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'; }
+function _tickColor() { return _isDark() ? '#888' : '#666'; }
+function _baseTooltip() {
+  return {
+    backgroundColor: _isDark() ? 'rgba(20,20,20,0.95)' : 'rgba(10,10,10,0.9)',
+    titleColor: '#fff',
+    bodyColor: '#ccc',
+    borderColor: 'rgba(255,255,255,0.1)',
+    borderWidth: 1,
+    padding: 12,
+    cornerRadius: 2,
+  };
+}
+
+// ── RATING DISTRIBUTION ────────────────────────────────────
+function _renderRatingDist(data) {
+  _destroyChart('ratingDist');
+  const allR = data.flatMap(d => [d.q1_regularity,d.q2_syllabus,d.q3_conceptual,
+    d.q4_practical,d.q5_communication,d.q6_teaching,d.q7_contribution]);
+  const counts = [1,2,3,4,5].map(v => allR.filter(r=>r===v).length);
+  const colors = ['#c82020','#c87000','#b8860b','#2a7a2a','#1a5a1a'];
+
+  _vizCharts.ratingDist = new Chart(
+    document.getElementById('vc_ratingDist').getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: ['1 — Poor','2 — Fair','3 — Good','4 — Very Good','5 — Excellent'],
+      datasets: [{ data: counts, backgroundColor: colors, borderRadius: 2, borderSkipped: false }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { display: false }, tooltip: { ...(_baseTooltip()) } },
+      scales: {
+        y: { beginAtZero: true, ticks: { color: _tickColor(), stepSize: 1 }, grid: { color: _gridColor() } },
+        x: { ticks: { color: _tickColor() }, grid: { display: false } }
+      }
+    }
+  });
+}
+
+// ── RADAR ──────────────────────────────────────────────────
+function _renderRadar(data) {
+  _destroyChart('radar');
+  const keys = ['q1_regularity','q2_syllabus','q3_conceptual','q4_practical','q5_communication','q6_teaching','q7_contribution'];
+  const avgs = keys.map(k => (data.reduce((s,d)=>s+d[k],0)/data.length).toFixed(2));
+
+  _vizCharts.radar = new Chart(
+    document.getElementById('vc_radar').getContext('2d'), {
+    type: 'radar',
+    data: {
+      labels: Q_LABELS,
+      datasets: [{
+        label: 'Average',
+        data: avgs,
+        borderColor: '#c8401a',
+        backgroundColor: 'rgba(200,64,26,0.1)',
+        borderWidth: 2,
+        pointBackgroundColor: '#c8401a',
+        pointRadius: 4,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { display: false }, tooltip: { ...(_baseTooltip()) } },
+      scales: {
+        r: {
+          min: 0, max: 5,
+          ticks: { stepSize: 1, color: _tickColor(), backdropColor: 'transparent' },
+          grid: { color: _gridColor() },
+          pointLabels: { color: _tickColor(), font: { size: 11, weight: '600' } }
+        }
+      }
+    }
+  });
+}
+
+// ── FACULTY LINE COMPARISON ────────────────────────────────
+function _renderFacultyLine(data) {
+  _destroyChart('facultyLine');
+  const keys = ['q1_regularity','q2_syllabus','q3_conceptual','q4_practical','q5_communication','q6_teaching','q7_contribution'];
+
+  const fMap = {};
+  data.forEach(d => {
+    if (!fMap[d.faculty_name]) fMap[d.faculty_name] = { counts: new Array(7).fill(0), sums: new Array(7).fill(0) };
+    keys.forEach((k,i) => { fMap[d.faculty_name].sums[i] += d[k]; fMap[d.faculty_name].counts[i]++; });
+  });
+
+  const datasets = Object.keys(fMap).sort().map((name, idx) => ({
+    label: name,
+    data: keys.map((_,i) => (fMap[name].sums[i]/fMap[name].counts[i]).toFixed(2)),
+    borderColor: PALETTE[idx % PALETTE.length],
+    backgroundColor: PALETTE[idx % PALETTE.length] + '12',
+    borderWidth: 2.5,
+    pointRadius: 5,
+    pointBackgroundColor: PALETTE[idx % PALETTE.length],
+    pointBorderColor: _isDark() ? '#1a1a1a' : '#fff',
+    pointBorderWidth: 2,
+    tension: 0.35,
+    fill: false,
+  }));
+
+  _vizCharts.facultyLine = new Chart(
+    document.getElementById('vc_facultyLine').getContext('2d'), {
+    type: 'line',
+    data: { labels: Q_LABELS, datasets },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: {
+          display: true, position: 'top',
+          labels: { color: _tickColor(), usePointStyle: true, pointStyle: 'circle', padding: 16, font: { size: 12 } }
+        },
+        tooltip: { ...(_baseTooltip()), callbacks: {
+          label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y}/5`
+        }}
+      },
+      scales: {
+        y: { min: 0, max: 5, ticks: { color: _tickColor(), stepSize: 1 }, grid: { color: _gridColor() } },
+        x: { ticks: { color: _tickColor(), font: {
+             weight: '600' } }, grid: { color: _gridColor() } }
+      }
+    }
+  });
+}
+
+// ── FACULTY LEADERBOARD ────────────────────────────────────
+function _renderLeaderboard(data) {
+  const fMap = {};
+  data.forEach(d => {
+    if (!fMap[d.faculty_name]) fMap[d.faculty_name] = { sum: 0, count: 0 };
+    fMap[d.faculty_name].sum   += _getAvg(d);
+    fMap[d.faculty_name].count += 1;
+  });
+  const ranked = Object.entries(fMap)
+    .map(([n,v]) => ({ n, avg: v.sum/v.count, count: v.count }))
+    .sort((a,b) => b.avg - a.avg);
+
+  const wrap = document.getElementById('vc_leaderboard');
+  wrap.innerHTML = ranked.map((f, i) => `
+    <div class="faculty-row">
+      <div class="faculty-rank ${i<3?'top':''}">${i<3?['🥇','🥈','🥉'][i]:'#'+(i+1)}</div>
+      <div class="faculty-name-cell">${f.n}</div>
+      <div class="faculty-bar-wrap">
+        <div class="faculty-bar-fill" style="width:${(f.avg/5)*100}%"></div>
+      </div>
+      <div class="faculty-score">${f.avg.toFixed(2)}</div>
+      <div class="faculty-count">${f.count} resp</div>
+    </div>
+  `).join('');
+}
+
+// ── SEMESTER BAR ───────────────────────────────────────────
+function _renderSemBar(data) {
+  _destroyChart('semBar');
+  const semMap = {};
+  data.forEach(d => {
+    const s = d.student_sem || 'N/A';
+    if (!semMap[s]) semMap[s] = [];
+    semMap[s].push(_getAvg(d));
+  });
+  const sems = Object.keys(semMap).sort((a,b) => parseInt(a)-parseInt(b));
+  const avgs = sems.map(s => (semMap[s].reduce((a,b)=>a+b,0)/semMap[s].length).toFixed(2));
+
+  _vizCharts.semBar = new Chart(
+    document.getElementById('vc_semBar').getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: sems.map(s => `Sem ${s}`),
+      datasets: [{
+        label: 'Avg Rating',
+        data: avgs,
+        backgroundColor: avgs.map(v => v>=4?'#1a5a1a':v>=3?'#b8860b':'#c82020'),
+        borderRadius: 2,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { display: false }, tooltip: { ...(_baseTooltip()) } },
+      scales: {
+        y: { min: 0, max: 5, ticks: { color: _tickColor() }, grid: { color: _gridColor() } },
+        x: { ticks: { color: _tickColor() }, grid: { display: false } }
+      }
+    }
+  });
+}
+
+// ── TREND LINE ─────────────────────────────────────────────
+function _renderTrend(data) {
+  _destroyChart('trend');
+  const dayMap = {};
+  data.forEach(d => {
+    if (!d.created_at) return;
+    const day = new Date(d.created_at).toISOString().split('T')[0];
+    dayMap[day] = (dayMap[day]||0) + 1;
+  });
+  const days  = Object.keys(dayMap).sort();
+  const counts = days.map(d => dayMap[d]);
+
+  _vizCharts.trend = new Chart(
+    document.getElementById('vc_trend').getContext('2d'), {
+    type: 'line',
+    data: {
+      labels: days,
+      datasets: [{
+        label: 'Submissions',
+        data: counts,
+        borderColor: '#c8401a',
+        backgroundColor: 'rgba(200,64,26,0.08)',
+        borderWidth: 2,
+        fill: true,
+        tension: 0.4,
+        pointRadius: counts.length > 60 ? 0 : 3,
+        pointBackgroundColor: '#c8401a',
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { display: false }, tooltip: { ...(_baseTooltip()) } },
+      scales: {
+        y: { beginAtZero: true, ticks: { color: _tickColor(), stepSize: 1 }, grid: { color: _gridColor() } },
+        x: {
+          ticks: { color: _tickColor(), maxTicksLimit: 12, maxRotation: 45 },
+          grid: { display: false }
+        }
+      }
+    }
+  });
+}
+
+// ── DEPT PIE ───────────────────────────────────────────────
+function _renderDeptPie(data) {
+  _destroyChart('deptPie');
+  const dMap = {};
+  data.forEach(d => { const k = d.student_dept||'Unknown'; dMap[k]=(dMap[k]||0)+1; });
+  const labels = Object.keys(dMap).sort();
+  const counts = labels.map(l => dMap[l]);
+
+  _vizCharts.deptPie = new Chart(
+    document.getElementById('vc_deptPie').getContext('2d'), {
+    type: 'doughnut',
+    data: {
+      labels,
+      datasets: [{ data: counts, backgroundColor: PALETTE.slice(0,labels.length), borderColor: _isDark()?'#2d2d2d':'#fff', borderWidth: 3 }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: {
+        legend: { position: 'right', labels: { color: _tickColor(), font: { size: 12 }, padding: 12 } },
+        tooltip: { ...(_baseTooltip()) }
+      }
+    }
+  });
+}
+
+// ── HEATMAP TABLE ──────────────────────────────────────────
+function _renderHeatmap(data) {
+  const keys  = ['q1_regularity','q2_syllabus','q3_conceptual','q4_practical','q5_communication','q6_teaching','q7_contribution'];
+  const short = ['Reg','Syl','Con','Prc','Com','Tch','Ctr'];
+
+  const fMap = {};
+  data.forEach(d => {
+    if (!fMap[d.faculty_name]) fMap[d.faculty_name] = { sums: new Array(7).fill(0), n: 0 };
+    keys.forEach((k,i) => fMap[d.faculty_name].sums[i] += d[k]);
+    fMap[d.faculty_name].n++;
+  });
+
+  const faculties = Object.keys(fMap).sort();
+
+  function _heatColor(v) {
+    if (v >= 4.5) return '#1a5a1a';
+    if (v >= 4.0) return '#2a7a2a';
+    if (v >= 3.5) return '#b8860b';
+    if (v >= 3.0) return '#c87000';
+    return '#c82020';
+  }
+
+  const isDark = _isDark();
+  let html = `<div style="overflow-x:auto; padding:12px 16px;">
+    <table style="width:100%;border-collapse:collapse;font-size:12px;">
+      <thead>
+        <tr>
+          <th style="text-align:left;padding:6px 8px;color:${isDark?'#999':'#666'};font-weight:700;border-bottom:2px solid ${isDark?'#404040':'#e0e0e0'};">Faculty</th>
+          ${short.map(s=><th style="text-align:center;padding:6px 8px;color:${isDark?'#999':'#666'};font-weight:700;border-bottom:2px solid ${isDark?'#404040':'#e0e0e0'};">${s}</th>).join('')}
+        </tr>
+      </thead>
+      <tbody>`;
+
+  faculties.forEach(name => {
+    const f = fMap[name];
+    html += `<tr>
+      <td style="padding:6px 8px;font-weight:600;color:${isDark?'#e0e0e0':'#333'};white-space:nowrap;border-bottom:1px solid ${isDark?'#333':'#f0f0f0'};">${name}</td>
+      ${f.sums.map(s => {
+        const v = s/f.n;
+        return `<td style="text-align:center;padding:6px 8px;border-bottom:1px solid ${isDark?'#333':'#f0f0f0'};">
+          <span style="display:inline-block;padding:3px 8px;background:${_heatColor(v)};color:#fff;border-radius:2px;font-weight:700;font-family:'Courier New',monospace;font-size:11px;">${v.toFixed(1)}</span>
+        </td>`;
+      }).join('')}
+    </tr>`;
+  });
+
+  html += "</tbody></table></div>";
+  document.getElementById('vc_heatmapWrap').innerHTML = html;
+}
+
+// ── EVENT LISTENERS ────────────────────────────────────────
+document.getElementById('vizApplyBtn').addEventListener('click', _applyVizFilters);
+
+document.getElementById('vizResetBtn').addEventListener('click', () => {
+  ['vf_year','vf_dept','vf_sem','vf_faculty','vf_period','vf_minrating'].forEach(id => {
+    const el = document.getElementById(id);
+    el.selectedIndex = 0;
+  });
+  document.getElementById('vf_period').value   = 'all';
+  document.getElementById('vizActiveTags').style.display = 'none';
+  document.getElementById('vizResultCount').textContent  = '';
+  document.getElementById('vizEmptyState').style.display = 'block';
+  document.getElementById('vizResults').style.display    = 'none';
+  document.getElementById('vizEmptyState').innerHTML = `
+    <div class="viz-empty">
+      <div class="viz-empty-icon">📊</div>
+      <div class="viz-empty-text">Select filters and click Analyse Now</div>
+      <div class="viz-empty-sub">Charts will appear here after applying filters</div>
+    </div>`;
+});
+
+document.getElementById('vizDownloadBtn').addEventListener('click', () => {
+  if (!_vizFiltered.length) { alert('Run an analysis first before downloading.'); return; }
+
+  const ts   = new Date().toLocaleString();
+  const rows = _vizFiltered.map(f => {
+    const avg = _getAvg(f).toFixed(2);
+    return `<tr>
+      <td>${f.id}</td><td>${f.student_name}</td><td>${f.student_code}</td>
+      <td>${f.course_name}</td><td>${f.faculty_name}</td>
+      <td>${f.q1_regularity}</td><td>${f.q2_syllabus}</td><td>${f.q3_conceptual}</td>
+      <td>${f.q4_practical}</td><td>${f.q5_communication}</td><td>${f.q6_teaching}</td>
+      <td>${f.q7_contribution}</td><td><strong>${avg}</strong></td>
+      <td>${f.comment||''}</td>
+    </tr>`;
+  }).join('');
+
+  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
+    <title>Feedback Report — ${ts}</title>
+    <style>
+      body{font-family:Arial,sans-serif;padding:30px;color:#111;}
+      h1{font-size:22px;margin-bottom:4px;}
+      .meta{color:#666;font-size:13px;margin-bottom:24px;}
+      table{width:100%;border-collapse:collapse;font-size:12px;}
+      th{background:#000;color:#fff;padding:10px 8px;text-align:left;}
+      td{padding:8px;border-bottom:1px solid #e0e0e0;}
+      tr:nth-child(even){background:#f9f9f9;}
+    </style></head><body>
+    <h1>Feedback Analytics Report</h1>
+    <div class="meta">Generated: ${ts} · Total records: ${_vizFiltered.length}</div>
+    <p><strong>Insights:</strong> ${document.getElementById('vizInsightsText').innerText}</p>
+    <br>
+    <table>
+      <thead><tr>
+        <th>ID</th><th>Student</th><th>Code</th><th>Course</th><th>Faculty</th>
+        <th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th><th>Q5</th><th>Q6</th><th>Q7</th>
+        <th>Avg</th><th>Comments</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    </body></html>`;
+
+  const blob = new Blob([html], { type: 'text/html' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = `feedback_report_${new Date().toISOString().split('T')[0]}.html`;
+  a.click();
+  URL.revokeObjectURL(url);
+});
+</script>
