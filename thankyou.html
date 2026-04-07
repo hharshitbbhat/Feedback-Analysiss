@@ -5,103 +5,129 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Thank You - Feedback Submitted</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
       background: #f5f5f5;
+      min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 100vh;
       padding: 20px;
+      transition: background 0.3s ease, color 0.3s ease;
     }
 
+    body.dark-theme { background: #1a1a1a; color: #e0e0e0; }
+
+    /* Theme Toggle */
+    .theme-toggle {
+      position: fixed;
+      top: 20px; right: 20px;
+      z-index: 1001;
+      background: white;
+      border: 2px solid #ddd;
+      border-radius: 50px;
+      padding: 10px 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      transition: all 0.3s ease;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    body.dark-theme .theme-toggle { background: #2d2d2d; border-color: #404040; color: #e0e0e0; }
+    .theme-toggle:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.12); }
+    .theme-toggle-icon { font-size: 20px; }
+    @media (max-width: 480px) { .theme-toggle-text { display: none; } }
+
+    /* Card */
     .box {
       background: white;
       padding: 60px 50px;
       text-align: center;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-      border-radius: 4px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+      border-radius: 2px;
       max-width: 500px;
       width: 100%;
       animation: fadeIn 0.5s ease-out;
     }
+    body.dark-theme .box { background: #2d2d2d; }
 
     @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
+    /* Black circle checkmark */
     .checkmark {
       width: 80px;
       height: 80px;
-      margin: 0 auto 25px;
-      background: #28a745;
+      margin: 0 auto 28px;
+      background: #000;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      animation: scaleIn 0.5s ease-out 0.2s both;
+      animation: scaleIn 0.45s cubic-bezier(0.34,1.56,0.64,1) 0.15s both;
     }
+    body.dark-theme .checkmark { background: #ffffff; }
 
     @keyframes scaleIn {
-      from {
-        transform: scale(0);
-      }
-      to {
-        transform: scale(1);
-      }
+      from { transform: scale(0); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
     }
 
     .checkmark svg {
-      width: 45px;
-      height: 45px;
+      width: 42px;
+      height: 42px;
       stroke: white;
       stroke-width: 3;
       fill: none;
       stroke-linecap: round;
       stroke-linejoin: round;
-      stroke-dasharray: 100;
-      stroke-dashoffset: 100;
-      animation: drawCheck 0.5s ease-out 0.5s forwards;
+      stroke-dasharray: 60;
+      stroke-dashoffset: 60;
+      animation: drawCheck 0.4s ease-out 0.6s forwards;
     }
+    body.dark-theme .checkmark svg { stroke: #000; }
 
     @keyframes drawCheck {
-      to {
-        stroke-dashoffset: 0;
-      }
+      to { stroke-dashoffset: 0; }
     }
 
     h1 {
-      color: #28a745;
-      margin-bottom: 15px;
       font-size: 32px;
-      font-weight: 700;
+      font-weight: 800;
       letter-spacing: -0.5px;
+      color: #000;
+      margin-bottom: 10px;
     }
+    body.dark-theme h1 { color: #ffffff; }
+
+    /* Underline accent — matches project section h2 */
+    .accent-line {
+      width: 60px;
+      height: 3px;
+      background: #000;
+      margin: 0 auto 20px;
+    }
+    body.dark-theme .accent-line { background: #ffffff; }
 
     p {
       color: #555;
-      margin-bottom: 30px;
-      font-size: 16px;
-      line-height: 1.6;
+      margin-bottom: 32px;
+      font-size: 15px;
+      line-height: 1.65;
     }
+    body.dark-theme p { color: #b0b0b0; }
 
+    /* Buttons */
     .button-group {
       display: flex;
-      gap: 15px;
+      gap: 14px;
       justify-content: center;
       flex-wrap: wrap;
     }
@@ -110,9 +136,11 @@
       display: inline-block;
       padding: 14px 28px;
       text-decoration: none;
-      border-radius: 4px;
-      font-weight: 600;
-      font-size: 15px;
+      border-radius: 2px;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
       transition: all 0.3s ease;
       border: 2px solid transparent;
     }
@@ -122,59 +150,103 @@
       color: white;
       border-color: #000;
     }
-
     a.primary:hover {
       background: #222;
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.25);
     }
+    body.dark-theme a.primary { background: #fff; color: #000; border-color: #fff; }
+    body.dark-theme a.primary:hover { background: #e0e0e0; }
 
     a.secondary {
       background: white;
       color: #000;
       border-color: #ddd;
     }
-
     a.secondary:hover {
       border-color: #000;
-      background: #f9f9f9;
+      background: #f5f5f5;
+      transform: translateY(-2px);
+    }
+    body.dark-theme a.secondary { background: #2d2d2d; color: #e0e0e0; border-color: #505050; }
+    body.dark-theme a.secondary:hover { border-color: #ffffff; background: #383838; }
+
+    /* Info strip — matches project admin-link style */
+    .info-strip {
+      margin-top: 32px;
+      padding: 14px 18px;
+      background: #f0f0f0;
+      border-left: 4px solid #000;
+      border-radius: 2px;
+      font-size: 13px;
+      color: #555;
+      text-align: left;
+      line-height: 1.5;
+    }
+    body.dark-theme .info-strip {
+      background: #242424;
+      border-left-color: #ffffff;
+      color: #a0a0a0;
     }
 
     @media (max-width: 480px) {
-      .box {
-        padding: 40px 30px;
-      }
-
-      h1 {
-        font-size: 26px;
-      }
-
-      .button-group {
-        flex-direction: column;
-      }
-
-      a {
-        width: 100%;
-      }
+      .box { padding: 40px 28px; }
+      h1   { font-size: 26px; }
+      .button-group { flex-direction: column; }
+      a    { width: 100%; text-align: center; }
     }
   </style>
 </head>
 <body>
+
+  <div class="theme-toggle" id="themeToggle">
+    <span class="theme-toggle-icon" id="themeIcon">🌙</span>
+    <span class="theme-toggle-text" id="themeText">Dark Mode</span>
+  </div>
+
   <div class="box">
+
     <div class="checkmark">
-      <svg viewBox="0 0 52 52">
+      <svg viewBox="0 0 52 52" aria-hidden="true">
         <polyline points="14 27 22 35 38 19"/>
       </svg>
     </div>
-    
+
     <h1>Thank You!</h1>
-    <p>Your feedback has been submitted successfully.<br>
-       We appreciate your time and honest opinions.</p>
+    <div class="accent-line"></div>
+
+    <p>
+      Your feedback has been submitted successfully.<br>
+      We appreciate your time and honest opinions —<br>
+      it helps improve the quality of education.
+    </p>
 
     <div class="button-group">
-      <a href="/feedback" class="primary">Submit Another Feedback</a>
-      <a href="/logout" class="secondary">Logout</a>
+      <a href="/feedback" class="primary">Submit Another</a>
+      <a href="/logout" class="secondary">⎋ Logout</a>
     </div>
+
+    <div class="info-strip">
+      🔒 Your feedback is confidential and reviewed only by administrators.
+    </div>
+
   </div>
+
+  <script>
+    const toggle = document.getElementById('themeToggle');
+    const icon   = document.getElementById('themeIcon');
+    const text   = document.getElementById('themeText');
+
+    function setTheme(dark) {
+      document.body.classList.toggle('dark-theme', dark);
+      icon.textContent = dark ? '☀️' : '🌙';
+      text.textContent = dark ? 'Light Mode' : 'Dark Mode';
+      localStorage.setItem('theme', dark ? 'dark' : 'light');
+    }
+
+    toggle.addEventListener('click', () => setTheme(!document.body.classList.contains('dark-theme')));
+    if (localStorage.getItem('theme') === 'dark') setTheme(true);
+  </script>
+
 </body>
 </html>
