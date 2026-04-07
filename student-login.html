@@ -205,6 +205,26 @@
             color: #dc3545;
         }
 
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            font-size: 14px;
+            font-family: inherit;
+            background: white;
+            transition: all 0.3s ease;
+            border-radius: 2px;
+            color: #000;
+        }
+
+        body.dark-theme input[type="text"],
+        body.dark-theme input[type="password"] {
+            border-color: #404040;
+            background: #3a3a3a;
+            color: #ffffff;
+        }
+
         body.dark-theme .required {
             color: #ff6b6b;
         }
@@ -520,6 +540,26 @@ async function handleLogin() {
         showMessage('Network error. Please try again.', 'error');
     }
 }
+
+// Auto-logout on revisit/back navigation to login page
+async function clearStudentSession() {
+    try {
+        await fetch('/logout?type=student', {
+            method: 'GET',
+            credentials: 'include'
+        });
+    } catch (err) {
+        console.error('Auto logout failed:', err);
+    }
+}
+
+window.addEventListener('pageshow', (event) => {
+    if (event.persisted || window.performance?.navigation?.type === 2) {
+        clearStudentSession();
+    }
+});
+
+clearStudentSession();
 
 /* ================= ENTER KEY SUPPORT ================= */
 document.getElementById('username').addEventListener('keydown', function(e) {
