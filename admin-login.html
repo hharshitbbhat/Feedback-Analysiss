@@ -279,6 +279,7 @@
 
             fetch('/admin/login', {
                 method: 'POST',
+                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -319,6 +320,26 @@
             
             setTimeout(() => div.remove(), 5000);
         }
+
+        // Auto-logout on revisit/back navigation to login page
+        async function clearAdminSession() {
+            try {
+                await fetch('/logout?type=admin', {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+            } catch (err) {
+                console.error('Auto logout failed:', err);
+            }
+        }
+
+        window.addEventListener('pageshow', (event) => {
+            if (event.persisted || window.performance?.navigation?.type === 2) {
+                clearAdminSession();
+            }
+        });
+
+        clearAdminSession();
     </script>
 </body>
 </html>
