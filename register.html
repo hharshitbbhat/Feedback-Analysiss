@@ -252,6 +252,7 @@ body.dark-theme .info-box {
 </div>
 
 <form method="POST" action="/register">
+<input type="hidden" name="csrfToken" id="csrfToken">
 
 <div class="form-title">Student Details</div>
 
@@ -271,12 +272,18 @@ body.dark-theme .info-box {
         <label>Department <span class="required">*</span></label>
         <select name="dept" required>
             <option value="">Select Department</option>
-            <option value="CSE">Computer Science</option>
-            <option value="IT">Information Technology</option>
-            <option value="ECE">Electronics</option>
-            <option value="EEE">Electrical</option>
-            <option value="ME">Mechanical</option>
-            <option value="CE">Civil</option>
+            <option value="Computer Science">Computer Science</option>
+            <option value="Information Technology">Information Technology</option>
+            <option value="Electronics &amp; Communication">Electronics &amp; Communication</option>
+            <option value="Electrical Engineering">Electrical Engineering</option>
+            <option value="Mechanical Engineering">Mechanical Engineering</option>
+            <option value="Civil Engineering">Civil Engineering</option>
+            <option value="Chemical Engineering">Chemical Engineering</option>
+            <option value="Biotechnology">Biotechnology</option>
+            <option value="Mathematics">Mathematics</option>
+            <option value="Physics">Physics</option>
+            <option value="Chemistry">Chemistry</option>
+            <option value="Other">Other</option>
         </select>
     </div>
 
@@ -294,14 +301,18 @@ body.dark-theme .info-box {
 
 <div class="form-group">
     <label>Password <span class="required">*</span></label>
-    <input type="password" name="password" minlength="6" placeholder="Minimum 6 characters" required>
+    <input type="password" name="password" minlength="8"
+           pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}"
+           title="8+ characters, uppercase, lowercase and number"
+           placeholder="Min 8 chars, uppercase, number" required>
+    <small id="passStrength" style="margin-top:6px"></small>
 </div>
 
 <!-- MOVED COLLEGE CODE AFTER PASSWORD -->
 <div class="form-group">
     <label>Registration Code <span class="required">*</span></label>
     <input type="text" name="registerationCode" placeholder="Enter registration code" required>
-    <small>Contact admin for code (Hint: JU.FEEDBACK)</small>
+    <small>Contact admin for code</small>
 </div>
 
 <button type="submit" class="register-btn">Create Account</button>
@@ -318,6 +329,22 @@ body.dark-theme .info-box {
 </div>
 
 <script>
+// Fetch CSRF token and inject into form before submit
+fetch('/api/csrf-token')
+  .then(r => r.json())
+  .then(data => {
+    let input = document.getElementById('csrfToken');
+    if (!input) {
+      input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = 'csrfToken';
+      input.id   = 'csrfToken';
+      document.querySelector('form').appendChild(input);
+    }
+    input.value = data.token;
+  })
+  .catch(() => console.error('Failed to fetch CSRF token'));
+
 const toggle = document.getElementById('themeToggle');
 const icon = document.getElementById('themeIcon');
 const text = document.getElementById('themeText');
@@ -336,6 +363,22 @@ toggle.addEventListener('click', () => {
 if (localStorage.getItem('theme') === 'dark') {
     setTheme(true);
 }
+
+// Password strength indicator
+document.querySelector('input[name="password"]').addEventListener('input', function() {
+  const val = this.value;
+  const strength = document.getElementById('passStrength');
+  if (val.length < 6) {
+    strength.textContent = '🔴 Too short';
+    strength.style.color = '#dc3545';
+  } else if (!/(?=.*[A-Z])(?=.*\d)/.test(val)) {
+    strength.textContent = '🟡 Add uppercase and number';
+    strength.style.color = '#f59e0b';
+  } else {
+    strength.textContent = '🟢 Strong password';
+    strength.style.color = '#10b981';
+  }
+});
 </script>
 
 </body>
