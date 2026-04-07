@@ -649,6 +649,20 @@
     </style>
 </head>
 <body>
+
+    <script>
+  // Check if session is still valid
+  fetch('/api/check-session')
+    .then(res => res.json())
+    .then(data => {
+  if (!data.authenticated || data.role !== 'student') {  // ← added role check
+    window.location.replace('/student-login');
+  }
+})
+.catch(() => {
+  window.location.replace('/student-login');  // ← fixed
+});
+</script>
     <!-- Theme Toggle Button -->
     <div class="theme-toggle" id="themeToggle">
         <span class="theme-toggle-icon" id="themeIcon">🌙</span>
@@ -670,6 +684,7 @@
         <div id="messageContainer"></div>
 
         <form id="feedbackForm" method="POST" action="/add-feedback">
+            <input type="hidden" name="csrfToken" id="feedbackCsrfToken">
             <!-- Basic Info -->
             <div class="section">
                 <div class="section-title">Basic Information</div>
@@ -723,6 +738,34 @@
 <script>
 let studentSemester = null;
 let loadedQuestions = [];
+let csrfToken = '';
+let selectedCourseId = '';
+let courseRefreshTimer = null;
+
+function keepLatestCourses(courses) {
+    const latestByKey = new Map();
+
+    (courses || []).forEach((course) => {
+        const key = [
+            String(course.course_name || '').trim().toLowerCase(),
+            String(course.programme || '').trim().toLowerCase(),
+            String(course.semester || '').trim()
+        ].join('::');
+        const currentId = Number.parseInt(course.course_id, 10);
+        const existing = latestByKey.get(key);
+        const existingId = Number.parseInt(existing?.course_id, 10);
+
+        if (!existing || currentId >= existingId) {
+            latestByKey.set(key, course);
+        }
+    });
+
+    return Array.from(latestByKey.values()).sort((a, b) => {
+        const semesterDiff = Number(a.semester) - Number(b.semester);
+        if (semesterDiff !== 0) return semesterDiff;
+        return String(a.course_name || '').localeCompare(String(b.course_name || ''));
+    });
+}
 
 /* ================= THEME TOGGLE ================= */
 const themeToggle = document.getElementById('themeToggle');
@@ -760,6 +803,80 @@ function showLoading(show) {
     btn.classList.toggle('loading', show);
     btn.disabled = show;
     btn.textContent = show ? 'Submitting...' : 'Submit Feedback';
+}
+
+function ensureCsrfToken() {
+    if (csrfToken) return Promise.resolve(csrfToken);
+    return fetch('/api/csrf-token', { credentials: 'same-origin' })
+        .then(res => {
+            if (!res.ok) throw new Error('Failed to fetch CSRF token');
+            return res.json();
+        })
+        .then(data => {
+            csrfToken = data.token || '';
+            if (!csrfToken) throw new Error('Missing CSRF token');
+            const input = document.getElementById('feedbackCsrfToken');
+            if (input) input.value = csrfToken;
+            return csrfToken;
+        });
+}
+
+function populateFacultyForCourse(courseId) {
+    const facultySelect = document.getElementById('faculty');
+    facultySelect.innerHTML = '<option value="">-- Select Faculty --</option>';
+
+    if (!courseId || !window.courseFacultyMap || !window.courseFacultyMap[courseId]) return;
+
+    const faculty = window.courseFacultyMap[courseId];
+    const opt = document.createElement('option');
+    opt.value = faculty.faculty_id;
+    opt.textContent = faculty.faculty_name;
+    opt.selected = true;
+    facultySelect.appendChild(opt);
+}
+
+function fetchCurrentFacultyForCourse(courseId, { silent = false } = {}) {
+    if (!courseId) {
+        populateFacultyForCourse('');
+        return Promise.resolve();
+    }
+
+    populateFacultyForCourse(String(courseId));
+
+    return fetch(`/api/course/${courseId}/faculty`, {
+        credentials: 'same-origin',
+        cache: 'no-store'
+    })
+        .then(res => {
+            if (!res.ok) throw new Error('Failed to fetch current faculty');
+            return res.json();
+        })
+        .then(data => {
+            if (!window.courseFacultyMap) window.courseFacultyMap = {};
+            window.courseFacultyMap[String(courseId)] = {
+                faculty_id: data.faculty_id,
+                faculty_name: data.faculty_name
+            };
+            populateFacultyForCourse(String(courseId));
+        })
+        .catch(err => {
+            console.error('Faculty refresh error:', err);
+            populateFacultyForCourse(String(courseId));
+            if (!silent) {
+                showMessage('Failed to refresh current faculty information', 'error');
+            }
+        });
+}
+
+function startCourseRefresh() {
+    if (courseRefreshTimer) clearInterval(courseRefreshTimer);
+    courseRefreshTimer = setInterval(() => {
+        if (selectedCourseId) {
+            fetchCurrentFacultyForCourse(selectedCourseId, { silent: true });
+        } else if (studentSemester) {
+            loadCoursesBySemester(studentSemester);
+        }
+    }, 5000);
 }
 
 /* ================= LOAD DYNAMIC QUESTIONS ================= */
@@ -913,16 +1030,19 @@ fetch('/api/current-student', { credentials: 'same-origin' })
 
 /* ================= COURSES BY SEMESTER ================= */
 function loadCoursesBySemester(semester) {
-    fetch(`/courses/${semester}`)
+    const previousCourseId = selectedCourseId || document.getElementById('course').value;
+    fetch(`/courses/${semester}`, {
+        credentials: 'same-origin',
+        cache: 'no-store'
+    })
         .then(res => res.json())
         .then(data => {
+            const latestCourses = keepLatestCourses(data);
             const courseSelect = document.getElementById('course');
-            const facultySelect = document.getElementById('faculty');
             courseSelect.innerHTML = '<option value="">-- Select Course --</option>';
-            facultySelect.innerHTML = '<option value="">-- Select Faculty --</option>';
             window.courseFacultyMap = {};
 
-            data.forEach(item => {
+            latestCourses.forEach(item => {
                 const courseOpt = document.createElement('option');
                 courseOpt.value = item.course_id;
                 courseOpt.textContent = item.course_name;
@@ -932,6 +1052,15 @@ function loadCoursesBySemester(semester) {
                     faculty_name: item.faculty_name 
                 };
             });
+
+            if (previousCourseId && window.courseFacultyMap[previousCourseId]) {
+                courseSelect.value = String(previousCourseId);
+                selectedCourseId = String(previousCourseId);
+                fetchCurrentFacultyForCourse(String(previousCourseId), { silent: true });
+            } else {
+                selectedCourseId = '';
+                populateFacultyForCourse('');
+            }
         })
         .catch(err => { 
             console.error(err); 
@@ -941,17 +1070,30 @@ function loadCoursesBySemester(semester) {
 
 /* ================= COURSE CHANGE HANDLER ================= */
 document.getElementById('course').addEventListener('change', function() {
-    const facultySelect = document.getElementById('faculty');
-    facultySelect.innerHTML = '<option value="">-- Select Faculty --</option>';
     const courseId = this.value;
-    if (!courseId || !window.courseFacultyMap[courseId]) return;
-    const faculty = window.courseFacultyMap[courseId];
-    const opt = document.createElement('option');
-    opt.value = faculty.faculty_id;
-    opt.textContent = faculty.faculty_name;
-    opt.selected = true;
-    facultySelect.appendChild(opt);
+    selectedCourseId = courseId || '';
+    fetchCurrentFacultyForCourse(courseId, { silent: true });
 });
+
+window.addEventListener('focus', () => {
+    if (selectedCourseId) {
+        fetchCurrentFacultyForCourse(selectedCourseId, { silent: true });
+    } else if (studentSemester) {
+        loadCoursesBySemester(studentSemester);
+    }
+});
+
+document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && studentSemester) {
+        if (selectedCourseId) {
+            fetchCurrentFacultyForCourse(selectedCourseId, { silent: true });
+        } else {
+            loadCoursesBySemester(studentSemester);
+        }
+    }
+});
+
+startCourseRefresh();
 
 /* ================= FORM SUBMISSION ================= */
 document.getElementById('feedbackForm').addEventListener('submit', function(e) {
@@ -992,10 +1134,15 @@ document.getElementById('feedbackForm').addEventListener('submit', function(e) {
     // Add responses to form data
     formData.append('question_responses', JSON.stringify(responses));
 
-    fetch('/add-feedback', { 
-        method: 'POST', 
-        body: formData, 
-        credentials: 'same-origin' 
+    ensureCsrfToken()
+    .then(token => {
+        if (!formData.has('csrfToken')) formData.append('csrfToken', token);
+        return fetch('/add-feedback', {
+            method: 'POST',
+            body: formData,
+            credentials: 'same-origin',
+            headers: { 'X-CSRF-Token': token }
+        });
     })
     .then(response => {
         if (!response.ok) {
@@ -1027,6 +1174,8 @@ function escapeHtml(text) {
     };
     return String(text).replace(/[&<>"']/g, m => map[m]);
 }
+
+ensureCsrfToken().catch(err => console.error('CSRF init error:', err));
 </script>
 
 </body>
